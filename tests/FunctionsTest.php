@@ -2,8 +2,13 @@
 
 namespace Tests;
 
+use function Functions\decrypt;
+use function Functions\encrypt;
+use function Functions\encryption_key;
 use function Functions\explode_string_by;
 use function Functions\expose_all;
+use function Functions\generate_random;
+use function Functions\has_encryption_key;
 use function Functions\join_file_folder_and_name;
 use function Functions\match_request_to_route;
 use function Functions\route;
@@ -34,7 +39,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
 
     public function testExposeAllReadOnlyVariables()
     {
-        $this->assertEquals(['post', 'get', 'request', 'server', 'argv', 'env'], array_keys(expose_all()));
+        $this->assertEquals(['post', 'get', 'request', 'server', 'argv', 'env', 'cookie', 'session'], array_keys(expose_all()));
     }
 
     public function testUriMatchesRoutePatternBaseUrl()
@@ -128,4 +133,41 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('/tmp/foo.php', join_file_folder_and_name('/tmp', 'foo.php'));
     }
+
+    public function testGeneratingRandomStrings()
+    {
+        $this->assertIsString(generate_random(16));
+    }
+
+    public function testBindingEncryptionKey()
+    {
+        encryption_key(__DIR__ . '/../');
+
+        $this->assertEquals(file_get_contents(__DIR__ . '/../.key'), getenv('ENCRYPTION_KEY'));
+    }
+
+    public function testHasEncryptionKey()
+    {
+        encryption_key(__DIR__ . '/../');
+
+        $this->assertTrue(has_encryption_key());
+    }
+
+    public function testEncryption()
+    {
+        encryption_key(__DIR__ . '/../');
+
+        $this->assertIsString(encrypt('foo', getenv('ENCRYPTION_KEY')));
+    }
+
+    public function testDecryption()
+    {
+        encryption_key(__DIR__ . '/../');
+
+        $encrypted = encrypt('foo', $key = getenv('ENCRYPTION_KEY'));
+
+        $this->assertEquals('foo', decrypt($encrypted, $key));
+    }
+
+
 }

@@ -97,6 +97,8 @@ function expose_all(): array
         'server' => expose_server(),
         'argv' => expose_argv(),
         'env' => expose_env(),
+        'cookie' => expose_cookie(),
+        'session' => expose_session(),
     ];
 }
 
@@ -307,6 +309,15 @@ function encrypt(string $string, string $key): string
 }
 
 /**
+ * @param string $path
+ * @return string
+ */
+function get_encryption_key(string $path): string
+{
+    return file_get_contents(join_file_folder_and_name($path, '/.key'));
+}
+
+/**
  * @param string $string
  * @param string $key
  * @return string
@@ -329,9 +340,9 @@ function expose_cookie(): array
 }
 
 /**
- * @return array
+ * @return array|null
  */
-function expose_session(): array
+function expose_session(): ?array
 {
-    return $_SESSION;
+    return $_SESSION ?? null;
 }
