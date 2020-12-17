@@ -99,6 +99,7 @@ function expose_all(): array
         'env' => expose_env(),
         'cookie' => expose_cookie(),
         'session' => expose_session(),
+        'view' => view(__DIR__ . '/../views'),
     ];
 }
 
@@ -203,7 +204,7 @@ function join_file_folder_and_name(string $folder, string $filename): string
  */
 function view(string $view_folder): Closure
 {
-    return function (string $view_name, array $kv_replacements) use ($view_folder) {
+    return function (string $view_name, array $kv_replacements = []) use ($view_folder) {
         $contents = file_get_contents(join_file_folder_and_name($view_folder, $view_name));
 
         return strtr($contents, $kv_replacements);
@@ -235,7 +236,7 @@ function session_begin(int $lifetime = 86400): bool
         'cookie_lifetime' => $lifetime,
     ]);
 
-    session_getset_csrf();
+    // session_getset_csrf();
 
     return $started;
 }

@@ -1,10 +1,8 @@
 <?php
 
-use function Functions\expose_argv;
-
 require __DIR__ . '/vendor/autoload.php';
 
-$silent = in_array('--silent', expose_argv());
+$silent = in_array('--silent', Functions\expose_argv());
 
 $file = Functions\join_file_folder_and_name(__DIR__, '/.key');
 

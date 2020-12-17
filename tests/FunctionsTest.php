@@ -39,7 +39,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
 
     public function testExposeAllReadOnlyVariables()
     {
-        $this->assertEquals(['post', 'get', 'request', 'server', 'argv', 'env', 'cookie', 'session'], array_keys(expose_all()));
+        $this->assertEquals(['post', 'get', 'request', 'server', 'argv', 'env', 'cookie', 'session', 'view'], array_keys(expose_all()));
     }
 
     public function testUriMatchesRoutePatternBaseUrl()
