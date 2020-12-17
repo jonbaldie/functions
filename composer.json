@@ -1,0 +1,16 @@
+{
+    "name": "jonbaldie/functions",
+    "description": "A library of functions based on the principles of pure functional programming.",
+    "authors": [{
+        "name": "Jonathan Baldie",
+        "email": "jon@jonbaldie.com"
+    }],
+    "autoload": {
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}

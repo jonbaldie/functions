@@ -1,0 +1,5 @@
+vendor/
+.key
+*.code-workspace
+.DS_STORE
+.idea/
