@@ -1,22 +1,22 @@
 {
-    "dependencies": {
-      "alpinejs": "^2.7.3",
-      "axios": "^0.21.0",
-      "bootstrap": "^4.5.3",
-      "vue": "2"
-    },
-    "devDependencies": {
-      "@symfony/webpack-encore": "^0.33.0",
-      "browsersync": "^0.0.1-security",
-      "jquery": "^3.5.1",
-      "popper.js": "^1.16.1",
-      "sass": "^1.29.0",
-      "sass-loader": "^10.0.0",
-      "scss": "^0.2.4",
-      "webpack-notifier": "^1.6.0"
-    },
-    "scripts": {
-        "dev": "yarn encore dev",
-        "production": "yarn encore production"
-    }
+  "dependencies": {
+    "alpinejs": "^2.7.3",
+    "axios": "^0.21.0",
+    "bootstrap": "^4.5.3",
+    "vue": "2"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.33.0",
+    "browsersync": "^0.0.1-security",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1",
+    "sass": "^1.29.0",
+    "sass-loader": "^10.0.0",
+    "scss": "^0.2.4",
+    "webpack-notifier": "^1.6.0"
+  },
+  "scripts": {
+    "dev": "yarn encore dev",
+    "production": "yarn encore production"
   }
+}
