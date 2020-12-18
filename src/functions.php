@@ -285,7 +285,7 @@ function session_set_csrf(): void
 {
     $key = getenv('ENCRYPTION_KEY');
 
-    setcookie('xsrf-token', encrypt(generate_random(16), $key), 3600);
+    setcookie('xsrf-token', encrypt(generate_random(16), $key), time() + 3600);
 }
 
 /**
@@ -337,13 +337,13 @@ function decrypt(string $encoded, string $key): string
  */
 function expose_cookie(): array
 {
-    return $_COOKIE;
+    return $_COOKIE ?? [];
 }
 
 /**
- * @return array|null
+ * @return array
  */
-function expose_session(): ?array
+function expose_session(): array
 {
-    return $_SESSION ?? null;
+    return $_SESSION ?? [];
 }
