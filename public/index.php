@@ -2,7 +2,9 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-Functions\encryption_key(__DIR__ . '/../');
+Functions\bind_encryption_key(
+    Functions\get_encryption_key(__DIR__ . '/../')
+);
 
 Functions\session_begin();
 

@@ -242,18 +242,12 @@ function session_begin(int $lifetime = 86400): bool
 }
 
 /**
- * @param string $path
+ * @param string $key
  * @return void
  */
-function encryption_key(string $path): void
+function bind_encryption_key(string $key): void
 {
-    $file = join_file_folder_and_name($path, '/.key');
-
-    if (file_exists($file) === false) {
-        throw new Exception('The ".key" file is empty. Please populate it with your encryption key and refresh.');
-    }
-
-    putenv('ENCRYPTION_KEY=' . ($key = file_get_contents($file)));
+    putenv('ENCRYPTION_KEY=' . $key);
 }
 
 /**

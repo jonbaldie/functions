@@ -2,12 +2,14 @@
 
 namespace Tests;
 
+use function Functions\bind_encryption_key;
 use function Functions\decrypt;
 use function Functions\encrypt;
 use function Functions\encryption_key;
 use function Functions\explode_string_by;
 use function Functions\expose_all;
 use function Functions\generate_random;
+use function Functions\get_encryption_key;
 use function Functions\has_encryption_key;
 use function Functions\join_file_folder_and_name;
 use function Functions\match_request_to_route;
@@ -139,30 +141,35 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsString(generate_random(16));
     }
 
-    public function testBindingEncryptionKey()
+    public function testGetEncryptionKey()
     {
-        encryption_key(__DIR__ . '/../');
+        $this->assertEquals(file_get_contents(__DIR__ . '/../.key'), get_encryption_key(__DIR__ . '/../'));
+    }
+
+    public function testBindEncryptionKey()
+    {
+        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
 
         $this->assertEquals(file_get_contents(__DIR__ . '/../.key'), getenv('ENCRYPTION_KEY'));
     }
 
     public function testHasEncryptionKey()
     {
-        encryption_key(__DIR__ . '/../');
+        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
 
         $this->assertTrue(has_encryption_key());
     }
 
     public function testEncryption()
     {
-        encryption_key(__DIR__ . '/../');
+        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
 
         $this->assertIsString(encrypt('foo', getenv('ENCRYPTION_KEY')));
     }
 
     public function testDecryption()
     {
-        encryption_key(__DIR__ . '/../');
+        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
 
         $encrypted = encrypt('foo', $key = getenv('ENCRYPTION_KEY'));
 
