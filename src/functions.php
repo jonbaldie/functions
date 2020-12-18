@@ -236,7 +236,7 @@ function session_begin(int $lifetime = 86400): bool
         'cookie_lifetime' => $lifetime,
     ]);
 
-    // session_getset_csrf();
+    session_getset_csrf();
 
     return $started;
 }
