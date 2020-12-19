@@ -12,6 +12,7 @@ use function Functions\encrypt;
 use function Functions\encryption_key;
 use function Functions\explode_string_by;
 use function Functions\expose_all;
+use function Functions\fetch_config_files;
 use function Functions\generate_random;
 use function Functions\get_encryption_key;
 use function Functions\has_encryption_key;
@@ -204,5 +205,12 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function testExistsCsrfFalse()
     {
         $this->assertFalse(csrf_exists());
+    }
+
+    public function testBindingConfigs()
+    {
+        $configs = fetch_config_files(__DIR__ . '/../config/');
+
+        $this->assertArrayHasKey('database', $configs);
     }
 }

@@ -3,6 +3,13 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 /**
+ * Bind all configuration options to the session.
+ */
+define('CONFIG', Functions\fetch_config_files(
+    __DIR__ . '/../config'
+));
+
+/**
  * Fetch and bind our encryption key to the session.
  */
 Functions\bind_encryption_key(

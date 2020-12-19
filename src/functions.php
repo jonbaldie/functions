@@ -8,9 +8,12 @@ use PDO;
 use function array_key_exists;
 use function explode;
 use function file_get_contents;
+use function glob;
+use function header;
 use function is_callable;
-use function strtr;
+use function realpath;
 use function rtrim;
+use function strtr;
 use function trim;
 
 /**
@@ -169,6 +172,23 @@ function response(?string $response, array $server): string
     }
 
     return $response;
+}
+
+/**
+ * @param string $path
+ * @return array
+ */
+function fetch_config_files(string $path): array
+{
+    $return = [];
+
+    foreach (glob(join_file_folder_and_name($path, '/*.php')) as $config_file) {
+        $key = strtr(basename($config_file), ['.php' => '']);
+
+        $return[$key] = require $config_file;
+    }
+
+    return $return;
 }
 
 /**
