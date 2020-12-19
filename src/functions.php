@@ -157,6 +157,21 @@ function route(array $routes, array $exposed_all)
 }
 
 /**
+ * @param string|null $response
+ * @return string
+ */
+function response(?string $response, array $server): string
+{
+    if ($response === null) {
+        header($server['SERVER_PROTOCOL'] . ' 404 Not Found', true, 404);
+
+        return '404 Not Found';
+    }
+
+    return $response;
+}
+
+/**
  * @param string $dsn
  * @param string|null $username
  * @param string|null $password

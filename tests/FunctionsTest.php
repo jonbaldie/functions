@@ -15,8 +15,10 @@ use function Functions\expose_all;
 use function Functions\generate_random;
 use function Functions\get_encryption_key;
 use function Functions\has_encryption_key;
+use function Functions\interpret_response;
 use function Functions\join_file_folder_and_name;
 use function Functions\match_request_to_route;
+use function Functions\response;
 use function Functions\route;
 use function Functions\strip_protocol;
 use function Functions\url_matches_route;
@@ -128,6 +130,11 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $this->assertNull($result);
+    }
+
+    public function testResponseInterpreter()
+    {
+        $this->assertEquals('bar', response('bar', []));
     }
 
     public function testJoiningFileFolderAndName()

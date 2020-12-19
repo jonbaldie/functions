@@ -22,12 +22,17 @@ Functions\csrf_exists() || Functions\csrf_send(
 );
 
 /**
- * Work out a response and then send it.
+ * Work out a response from the HTTP request.
  */
-echo Functions\route([
+$response = Functions\route([
     'GET' => [
         '/' => function (array $all) {
             return $all['view']('index.html');
         },
     ]
-], Functions\expose_all());
+], $all = Functions\expose_all());
+
+/**
+ * Now send the response, including any headers.
+ */
+echo Functions\response($response, $all['server']);
