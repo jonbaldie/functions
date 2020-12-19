@@ -3,6 +3,10 @@
 namespace Tests;
 
 use function Functions\bind_encryption_key;
+use function Functions\csrf_create;
+use function Functions\csrf_exists;
+use function Functions\csrf_get;
+use function Functions\csrf_send;
 use function Functions\decrypt;
 use function Functions\encrypt;
 use function Functions\encryption_key;
@@ -176,5 +180,22 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('foo', decrypt($encrypted, $key));
     }
 
+    public function testCreateCsrf()
+    {
+        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
 
+        $csrf = csrf_create(getenv('ENCRYPTION_KEY'));
+
+        $this->assertIsString($csrf);
+    }
+
+    public function testGetCsrfNull()
+    {
+        $this->assertNull(csrf_get());
+    }
+
+    public function testExistsCsrfFalse()
+    {
+        $this->assertFalse(csrf_exists());
+    }
 }

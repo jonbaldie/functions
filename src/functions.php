@@ -5,10 +5,10 @@ namespace Functions;
 use Closure;
 use Exception;
 use PDO;
+use function array_key_exists;
 use function explode;
 use function file_get_contents;
 use function is_callable;
-use function realpath;
 use function strtr;
 use function rtrim;
 use function trim;
@@ -236,8 +236,6 @@ function session_begin(int $lifetime = 86400): bool
         'cookie_lifetime' => $lifetime,
     ]);
 
-    session_getset_csrf();
-
     return $started;
 }
 
@@ -250,36 +248,36 @@ function bind_encryption_key(string $key): void
     putenv('ENCRYPTION_KEY=' . $key);
 }
 
-/**
- * @return string
- */
-function session_getset_csrf(): string
+function csrf_exists(): bool
 {
-    $csrf = session_get_csrf();
-
-    if ($csrf === null) {
-        session_set_csrf();
-    }
-
-    return $csrf ?? session_get_csrf();
+    return array_key_exists('xsrf-token', expose_cookie());
 }
 
 /**
  * @return string|null
  */
-function session_get_csrf(): ?string
+function csrf_get(): ?string
 {
     return expose_cookie()['xsrf-token'] ?? null;
 }
 
 /**
+ * @param string $key
+ * @return string
+ */
+function csrf_create(string $key): string
+{
+    return encrypt(generate_random(16), $key);
+}
+
+/**
+ * @param string $csrf
+ * @param integer $seconds
  * @return void
  */
-function session_set_csrf(): void
+function csrf_send(string $csrf, int $seconds = 3600): void
 {
-    $key = getenv('ENCRYPTION_KEY');
-
-    setcookie('xsrf-token', encrypt(generate_random(16), $key), time() + 3600);
+    setcookie('xsrf-token', $csrf, time() + $seconds);
 }
 
 /**
