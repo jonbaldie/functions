@@ -6,15 +6,27 @@ use Closure;
 use Exception;
 use PDO;
 use function array_key_exists;
+use function base64_decode;
+use function base64_encode;
+use function basename;
+use function bin2hex;
 use function explode;
 use function file_get_contents;
+use function getenv;
 use function glob;
 use function header;
 use function is_callable;
-use function realpath;
+use function mb_substr;
+use function openssl_random_pseudo_bytes;
+use function parse_url;
+use function putenv;
+use function random_bytes;
 use function rtrim;
+use function setcookie;
 use function strtr;
+use function time;
 use function trim;
+use function urldecode;
 
 /**
  * @param string $string
@@ -104,6 +116,27 @@ function expose_all(): array
         'session' => expose_session(),
         'view' => view(__DIR__ . '/../views'),
     ];
+}
+
+/**
+ * @param string $request_uri
+ * @return string
+ */
+function uri(string $request_uri): string
+{
+    return urldecode(parse_url($request_uri, PHP_URL_PATH));
+}
+
+/**
+ * @param string $uri
+ * @param string $public_path
+ * @return boolean
+ */
+function mod_rewrite(string $uri, string $public_path, string $php_sapi): bool
+{
+    return $php_sapi === 'cli-server'
+        && $uri !== '/' 
+        && file_exists(join_file_folder_and_name($public_path, $uri));
 }
 
 /**

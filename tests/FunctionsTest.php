@@ -19,9 +19,11 @@ use function Functions\has_encryption_key;
 use function Functions\interpret_response;
 use function Functions\join_file_folder_and_name;
 use function Functions\match_request_to_route;
+use function Functions\mod_rewrite;
 use function Functions\response;
 use function Functions\route;
 use function Functions\strip_protocol;
+use function Functions\uri;
 use function Functions\url_matches_route;
 
 class FunctionsTest extends \PHPUnit\Framework\TestCase
@@ -212,5 +214,20 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
         $configs = fetch_config_files(__DIR__ . '/../config/');
 
         $this->assertArrayHasKey('database', $configs);
+    }
+
+    public function testParsedUri()
+    {
+        $this->assertEquals('foo', uri('foo'));
+    }
+
+    public function testModRewrite()
+    {
+        $this->assertTrue(mod_rewrite('index.php', __DIR__ . '/../public', 'cli-server'));
+    }
+
+    public function testModRewriteFalse()
+    {
+        $this->assertFalse(mod_rewrite('foo.txt', __DIR__ . '/../public', 'foo-server'));
     }
 }
