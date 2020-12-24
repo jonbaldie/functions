@@ -1,0 +1,13 @@
+language: php
+
+php:
+    - 7.3
+    - 7.4
+
+script:
+    - composer self-update
+    - composer install --no-interaction
+    - vendor/bin/phpunit ./tests
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)

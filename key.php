@@ -14,4 +14,6 @@ $key = sodium_crypto_secretbox_keygen();
 
 file_put_contents($file, $key);
 
-exit($silent ? '' : "Your key is now located in the file '.key' inside this directory. *DO NOT EDIT IT!* We recommend running 'chmod 0600 .key' to make certain it remains read-only.\n");
+chmod($file, 0600);
+
+exit($silent ? '' : "Your key is now located in the file '.key' inside this directory. *DO NOT EDIT IT!*\n");
