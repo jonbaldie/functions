@@ -157,33 +157,36 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetEncryptionKey()
     {
-        $this->assertEquals(file_get_contents(__DIR__ . '/../.key'), get_encryption_key(__DIR__ . '/../'));
+        $contents = $this->getDotKeyFileContents();
+
+        $this->assertEquals($contents, get_encryption_key(__DIR__ . '/../'));
     }
 
     public function testBindEncryptionKey()
     {
-        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
+        $contents = $this->getDotKeyFileContents();
+        bind_encryption_key($contents);
 
-        $this->assertEquals(file_get_contents(__DIR__ . '/../.key'), getenv('ENCRYPTION_KEY'));
+        $this->assertEquals($contents, getenv('ENCRYPTION_KEY'));
     }
 
     public function testHasEncryptionKey()
     {
-        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
+        bind_encryption_key($this->getDotKeyFileContents());
 
         $this->assertTrue(has_encryption_key());
     }
 
     public function testEncryption()
     {
-        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
+        bind_encryption_key($this->getDotKeyFileContents());
 
         $this->assertIsString(encrypt('foo', getenv('ENCRYPTION_KEY')));
     }
 
     public function testDecryption()
     {
-        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
+        bind_encryption_key($this->getDotKeyFileContents());
 
         $encrypted = encrypt('foo', $key = getenv('ENCRYPTION_KEY'));
 
@@ -192,7 +195,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateCsrf()
     {
-        bind_encryption_key(file_get_contents(__DIR__ . '/../.key'));
+        bind_encryption_key($this->getDotKeyFileContents());
 
         $csrf = csrf_create(getenv('ENCRYPTION_KEY'));
 
@@ -229,5 +232,13 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function testModRewriteFalse()
     {
         $this->assertFalse(mod_rewrite('foo.txt', __DIR__ . '/../public', 'foo-server'));
+    }
+
+    /**
+     * @return false|string
+     */
+    protected function getDotKeyFileContents()
+    {
+        return base64_decode(file_get_contents(__DIR__ . '/../.key'));
     }
 }

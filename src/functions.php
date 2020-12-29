@@ -3,7 +3,6 @@
 namespace Functions;
 
 use Closure;
-use Exception;
 use PDO;
 use function array_key_exists;
 use function base64_decode;
@@ -372,7 +371,7 @@ function encrypt(string $string, string $key): string
  */
 function get_encryption_key(string $path): string
 {
-    return file_get_contents(join_file_folder_and_name($path, '/.key'));
+    return base64_decode(file_get_contents(join_file_folder_and_name($path, '/.key')));
 }
 
 /**

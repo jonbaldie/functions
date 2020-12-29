@@ -10,7 +10,9 @@ if (file_exists($file)) {
     exit($silent ? '' : "The '.key' file already exists inside this directory. There is rarely a need to replace your app's encryption key. But if you're sure you want to generate a new one, please delete it first.\n");
 }
 
-$key = sodium_crypto_secretbox_keygen();
+$key = base64_encode(
+    sodium_crypto_secretbox_keygen()
+);
 
 file_put_contents($file, $key);
 
