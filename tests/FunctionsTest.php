@@ -1,22 +1,18 @@
 <?php
 
-namespace Tests;
-
+use PHPUnit\Framework\TestCase;
 use function Functions\bind_encryption_key;
 use function Functions\csrf_create;
 use function Functions\csrf_exists;
 use function Functions\csrf_get;
-use function Functions\csrf_send;
 use function Functions\decrypt;
 use function Functions\encrypt;
-use function Functions\encryption_key;
 use function Functions\explode_string_by;
 use function Functions\expose_all;
 use function Functions\fetch_config_files;
 use function Functions\generate_random;
 use function Functions\get_encryption_key;
 use function Functions\has_encryption_key;
-use function Functions\interpret_response;
 use function Functions\join_file_folder_and_name;
 use function Functions\match_request_to_route;
 use function Functions\mod_rewrite;
@@ -26,7 +22,7 @@ use function Functions\strip_protocol;
 use function Functions\uri;
 use function Functions\url_matches_route;
 
-class FunctionsTest extends \PHPUnit\Framework\TestCase
+class FunctionsTest extends TestCase
 {
     public function testStripProtocolHttp()
     {
