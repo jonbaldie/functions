@@ -130,7 +130,8 @@ function uri(string $request_uri): string
 /**
  * @param string $uri
  * @param string $public_path
- * @return boolean
+ * @param string $php_sapi
+ * @return bool
  */
 function mod_rewrite(string $uri, string $public_path, string $php_sapi): bool
 {
@@ -146,7 +147,8 @@ function mod_rewrite(string $uri, string $public_path, string $php_sapi): bool
  */
 function url_matches_route(string $uri, string $route_pattern): bool
 {
-    $uri = trim(explode_string_by('?')($uri)[0], '/');
+    $exploded = explode_string_by('?')($uri);
+    $uri = trim($exploded[0], '/');
     $route_pattern = trim($route_pattern, '/');
 
     return "/{$uri}" === "/{$route_pattern}";
@@ -182,7 +184,7 @@ function match_request_to_route(array $routes): Closure
  */
 function route(array $routes, array $exposed_all)
 {
-    $callable = match_request_to_route($routes, $exposed_all)(
+    $callable = match_request_to_route($routes)(
         $exposed_all['server']['REQUEST_METHOD'],
         $exposed_all['server']['REQUEST_URI']
     );
@@ -194,6 +196,7 @@ function route(array $routes, array $exposed_all)
 
 /**
  * @param string|null $response
+ * @param array $server
  * @return string
  */
 function response(?string $response, array $server): string
@@ -296,15 +299,9 @@ function generate_random(int $length): string
  */
 function session_begin(int $lifetime = 86400): bool
 {
-    if (has_encryption_key() === false) {
-        throw new Exception('No encryption key is defined. Set it in your environment under the key "ENCRYPTION_KEY".');
-    }
-
-    $started = session_start([
+    return session_start([
         'cookie_lifetime' => $lifetime,
     ]);
-
-    return $started;
 }
 
 /**
@@ -379,7 +376,7 @@ function get_encryption_key(string $path): string
 }
 
 /**
- * @param string $string
+ * @param string $encoded
  * @param string $key
  * @return string
  */

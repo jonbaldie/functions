@@ -17,5 +17,11 @@
         "post-autoload-dump": [
             "php key.php --silent"
         ]
+    },
+    "require": {
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-sodium": "*"
     }
 }
