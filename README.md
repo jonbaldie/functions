@@ -12,6 +12,14 @@ Then to generate your front-end assets:
 yarn install && yarn encore dev
 ```
 
+Start a local PHP server:
+
+```
+php -S localhost:3000 public/index.php
+```
+
+Then open up https://localhost:3000 and you should see "It works!"
+
 Wait, what's a "pure function"?
 
 Pure functions map variables from an input and produce an output, with no observable side-effects. They're easily testable, can be moved anywhere, and used in any context with no unexpected effects. This concept comes from functional programming languages like Clojure, Scala, or Haskell.
