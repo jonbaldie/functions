@@ -25,7 +25,7 @@ Functions\session_begin();
  * If the CSRF token hasn't been sent, then send it.
  */
 Functions\csrf_exists() || Functions\csrf_send(
-    Functions\csrf_create(getenv('ENCRYPTION_KEY'))
+    Functions\csrf_create(Functions\env('ENCRYPTION_KEY'))
 );
 
 /**
@@ -33,7 +33,7 @@ Functions\csrf_exists() || Functions\csrf_send(
  */
 $mod_rewrite = Functions\mod_rewrite(
     Functions\uri(Functions\expose_server()['REQUEST_URI']),
-    __DIR__ . '/../public',
+    __DIR__,
     PHP_SAPI
 );
 
