@@ -177,16 +177,23 @@ function url_matches_route(string $uri, string $route_pattern): bool
 function match_request_to_route(array $routes): Closure
 {
     return function (string $request_method, string $url) use ($routes): ?callable {
-        $routes_to_use = $routes[$request_method] ?? null;
+        $routes_to_use = $routes[$request_method];
 
-        if ($routes_to_use === null) {
-            return null;
-        }
+        $patterns = array_keys($routes_to_use);
 
-        foreach ($routes_to_use as $route_pattern => $callable) {
-            if (url_matches_route($url, $route_pattern)) {
-                return $callable;
+        $match = array_reduce($patterns, function ($carry, string $route) use ($url) {
+            if ($carry['match'] === false) {
+                $carry = [
+                    'route' => $route,
+                    'match' => url_matches_route($url, $route),
+                ];
             }
+
+            return $carry;
+        }, ['route' => null, 'match' => false]);
+
+        if ($match['match'] === true) {
+            return $routes_to_use[$match['route']];
         }
 
         return null;
@@ -241,19 +248,15 @@ function list_php_files_in_path(string $path): array
  */
 function fetch_config_files(string $path): array
 {
-    $kv = array_map(function (string $config_file) {
-        $config = require $config_file;
+    $config_files = list_php_files_in_path($path);
 
-        return [
-            'key' => strtr(basename($config_file), ['.php' => '']),
-            'value' => $config, 
-        ];
-    }, list_php_files_in_path($path));
+    return array_reduce($config_files, function ($carry, $config_file) {
+        $value = require $config_file;
 
-    return array_combine(
-        array_column($kv, 'key'),
-        array_column($kv, 'value'),
-    );
+        $carry[strtr(basename($config_file), ['.php' => ''])] = $value;
+
+        return $carry;
+    }, []);
 }
 
 /**
