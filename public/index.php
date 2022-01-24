@@ -42,15 +42,14 @@ if ($mod_rewrite) {
 }
 
 /**
+ * Grab all of our defined routes.
+ */
+$routes = require __DIR__ . '/../routes.php';
+
+/**
  * Work out a response from the HTTP request.
  */
-$response = Functions\route([
-    'GET' => [
-        '/' => function (array $all) {
-            return $all['view']('index.html');
-        },
-    ]
-], $all = Functions\expose_all());
+$response = Functions\route($routes, $all = Functions\expose_all());
 
 /**
  * Now send the response, including any headers.
