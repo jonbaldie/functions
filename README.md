@@ -1,9 +1,11 @@
+# PHP Functional Programming Skeleton Project
+
 **Functions** is a PHP skeleton project built upon a foundation of pure functions. It's a fun personal project of mine but it is unit tested and stable, if you'd like to give it a go.
 
 Just run this to get started:
 
 ```
-composer create-project jonbaldie/functions my-project
+composer create-project jonbaldie/functions my-project && cd my-project
 ```
 
 Then to generate your front-end assets:
@@ -18,7 +20,7 @@ Start a local PHP server:
 cd public && php -S localhost:3000 index.php
 ```
 
-Then open up https://localhost:3000 and you should see "It works!"
+Open up https://localhost:3000 and you should see "It works!"
 
 Wait, what's a "pure function"?
 
