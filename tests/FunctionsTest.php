@@ -9,15 +9,18 @@ use function Functions\decrypt;
 use function Functions\encrypt;
 use function Functions\explode_string_by;
 use function Functions\expose_all;
+use function Functions\env;
 use function Functions\fetch_config_files;
 use function Functions\generate_random;
 use function Functions\get_encryption_key;
 use function Functions\has_encryption_key;
 use function Functions\join_file_folder_and_name;
+use function Functions\list_php_files_in_path;
 use function Functions\match_request_to_route;
 use function Functions\mod_rewrite;
 use function Functions\response;
 use function Functions\route;
+use function Functions\save_env;
 use function Functions\strip_protocol;
 use function Functions\uri;
 use function Functions\url_matches_route;
@@ -161,9 +164,10 @@ class FunctionsTest extends TestCase
     public function testBindEncryptionKey()
     {
         $contents = $this->getDotKeyFileContents();
+
         bind_encryption_key($contents);
 
-        $this->assertEquals($contents, getenv('ENCRYPTION_KEY'));
+        $this->assertEquals($contents, env('ENCRYPTION_KEY'));
     }
 
     public function testHasEncryptionKey()
@@ -177,14 +181,14 @@ class FunctionsTest extends TestCase
     {
         bind_encryption_key($this->getDotKeyFileContents());
 
-        $this->assertIsString(encrypt('foo', getenv('ENCRYPTION_KEY')));
+        $this->assertIsString(encrypt('foo', env('ENCRYPTION_KEY')));
     }
 
     public function testDecryption()
     {
         bind_encryption_key($this->getDotKeyFileContents());
 
-        $encrypted = encrypt('foo', $key = getenv('ENCRYPTION_KEY'));
+        $encrypted = encrypt('foo', $key = env('ENCRYPTION_KEY'));
 
         $this->assertEquals('foo', decrypt($encrypted, $key));
     }
@@ -193,7 +197,7 @@ class FunctionsTest extends TestCase
     {
         bind_encryption_key($this->getDotKeyFileContents());
 
-        $csrf = csrf_create(getenv('ENCRYPTION_KEY'));
+        $csrf = csrf_create(env('ENCRYPTION_KEY'));
 
         $this->assertIsString($csrf);
     }
@@ -206,6 +210,17 @@ class FunctionsTest extends TestCase
     public function testExistsCsrfFalse()
     {
         $this->assertFalse(csrf_exists());
+    }
+
+    public function testListingPhpFiles()
+    {
+        $configs = list_php_files_in_path(__DIR__ . '/../config/');
+
+        $test = array_filter($configs, function (string $config): bool {
+            return $config !== strtr($config, '.php', '');
+        });
+
+        $this->assertNotEmpty($configs);
     }
 
     public function testBindingConfigs()
@@ -230,11 +245,18 @@ class FunctionsTest extends TestCase
         $this->assertFalse(mod_rewrite('foo.txt', __DIR__ . '/../public', 'foo-server'));
     }
 
+    public function testSaveToEnv()
+    {
+        save_env('foo', 'bar');
+
+        $this->assertEquals('bar', env('foo'));
+    }
+
     /**
      * @return false|string
      */
     protected function getDotKeyFileContents()
     {
-        return base64_decode(file_get_contents(__DIR__ . '/../.key'));
+        return get_encryption_key(__DIR__ . '/../');
     }
 }
