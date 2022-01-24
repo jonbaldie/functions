@@ -11,14 +11,12 @@ use function basename;
 use function bin2hex;
 use function explode;
 use function file_get_contents;
-use function getenv;
 use function glob;
 use function header;
 use function is_callable;
 use function mb_substr;
 use function openssl_random_pseudo_bytes;
 use function parse_url;
-use function putenv;
 use function random_bytes;
 use function rtrim;
 use function setcookie;
@@ -97,6 +95,25 @@ function expose_argv(): array
 function expose_env(): array
 {
     return $_ENV;
+}
+
+/**
+ * @param string $key
+ * @param mixed $value
+ * @return void
+ */
+function save_env(string $key, $value): void
+{
+    $_ENV[$key] = $value;
+}
+
+/**
+ * @param string $key
+ * @return mixed
+ */
+function env(string $key)
+{
+    return expose_env()[$key];
 }
 
 /**
@@ -213,17 +230,30 @@ function response(?string $response, array $server): string
  * @param string $path
  * @return array
  */
+function list_php_files_in_path(string $path): array
+{
+    return glob(join_file_folder_and_name($path, '/*.php'));
+}
+
+/**
+ * @param string $path
+ * @return array
+ */
 function fetch_config_files(string $path): array
 {
-    $return = [];
+    $kv = array_map(function (string $config_file) {
+        $config = require $config_file;
 
-    foreach (glob(join_file_folder_and_name($path, '/*.php')) as $config_file) {
-        $key = strtr(basename($config_file), ['.php' => '']);
+        return [
+            'key' => strtr(basename($config_file), ['.php' => '']),
+            'value' => $config, 
+        ];
+    }, list_php_files_in_path($path));
 
-        $return[$key] = require $config_file;
-    }
-
-    return $return;
+    return array_combine(
+        array_column($kv, 'key'),
+        array_column($kv, 'value'),
+    );
 }
 
 /**
@@ -309,7 +339,7 @@ function session_begin(int $lifetime = 86400): bool
  */
 function bind_encryption_key(string $key): void
 {
-    putenv('ENCRYPTION_KEY=' . $key);
+    save_env('ENCRYPTION_KEY', $key);
 }
 
 function csrf_exists(): bool
@@ -349,7 +379,7 @@ function csrf_send(string $csrf, int $seconds = 3600): void
  */
 function has_encryption_key(): bool
 {
-    return empty(getenv('ENCRYPTION_KEY')) === false;
+    return empty(env('ENCRYPTION_KEY')) === false;
 }
 
 /**

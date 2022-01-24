@@ -11,7 +11,7 @@ if (file_exists($file)) {
 }
 
 $key = base64_encode(
-    sodium_crypto_secretbox_keygen()
+    $gen = sodium_crypto_secretbox_keygen()
 );
 
 file_put_contents($file, $key);
