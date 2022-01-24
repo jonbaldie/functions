@@ -15,7 +15,7 @@ yarn install && yarn encore dev
 Start a local PHP server:
 
 ```
-php -S localhost:3000 public/index.php
+cd public && php -S localhost:3000 index.php
 ```
 
 Then open up https://localhost:3000 and you should see "It works!"

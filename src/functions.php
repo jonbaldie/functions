@@ -379,7 +379,9 @@ function csrf_send(string $csrf, int $seconds = 3600): void
  */
 function has_encryption_key(): bool
 {
-    return empty(env('ENCRYPTION_KEY')) === false;
+    $env = expose_env();
+
+    return empty($env['ENCRYPTION_KEY']) === false;
 }
 
 /**
