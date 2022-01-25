@@ -303,7 +303,7 @@ function fetch_config_files(string $path): array
 }
 
 /**
- * Provide a generic PDO object for the provided DSN and connection details.
+ * Return a generic PDO object for the provided DSN and connection details.
  * Good for database engine-agnostic applications.
  * 
  * @param string $dsn
