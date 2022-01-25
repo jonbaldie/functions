@@ -211,7 +211,7 @@ function url_matches_route(string $uri, string $route_pattern): bool
  */
 function match_request_to_route(array $routes): Closure
 {
-    return function (string $request_method, string $url) use ($routes): ?callable {
+    return function (string $request_method, string $url) use ($routes): callable {
         $routes_to_use = $routes[$request_method];
 
         $patterns = array_keys($routes_to_use);
@@ -231,7 +231,23 @@ function match_request_to_route(array $routes): Closure
             return $routes_to_use[$match['route']];
         }
 
-        return null;
+        return not_found_route();
+    };
+}
+
+/**
+ * A generic 404 route for our project.
+ *
+ * @return Closure
+ */
+function not_found_route(): Closure
+{
+    return function (array $all): string {
+        if (php_sapi_name() !== 'cli') {
+            header($all['server']['SERVER_PROTOCOL'] . ' 404 Not Found', true, 404);
+        }
+
+        return '404 Not Found';
     };
 }
 
@@ -256,19 +272,14 @@ function route(array $routes, array $exposed_all)
 /**
  * Send a response with a header.
  * @todo Split out the sending of headers from the sending of a response.
+ * @todo Is this even needed? Refactor as necessary.
  * 
  * @param string|null $response
  * @param array $server
  * @return string
  */
-function response(?string $response, array $server): string
+function response(string $response, array $server): string
 {
-    if ($response === null) {
-        header($server['SERVER_PROTOCOL'] . ' 404 Not Found', true, 404);
-
-        return '404 Not Found';
-    }
-
     return $response;
 }
 
