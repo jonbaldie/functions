@@ -486,7 +486,7 @@ function get_encryption_key(string $path): string
 }
 
 /**
- * Decrypts a base64-encoded and encrypted string.
+ * Decrypts a string encrypted by our encrypt function.
  * 
  * @param string $encoded
  * @param string $key
