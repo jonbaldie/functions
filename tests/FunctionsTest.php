@@ -18,6 +18,7 @@ use function Functions\join_file_folder_and_name;
 use function Functions\list_php_files_in_path;
 use function Functions\match_request_to_route;
 use function Functions\mod_rewrite;
+use function Functions\not_found_route;
 use function Functions\response;
 use function Functions\route;
 use function Functions\save_env;
@@ -85,19 +86,6 @@ class FunctionsTest extends TestCase
         $this->assertIsCallable($function('GET', '/foo?bar'));
     }
 
-    public function testMatchingRequestToRouteNull()
-    {
-        $function = match_request_to_route([
-            'GET' => [
-                '/foo' => function () {
-                    return 'bar';
-                },
-            ],
-        ]);
-
-        $this->assertNull($function('GET', '/bar?foo'));
-    }
-
     public function testRoutingFunction()
     {
         $result = route([
@@ -118,20 +106,23 @@ class FunctionsTest extends TestCase
 
     public function testRoutingFunctionFails()
     {
+        $all = [
+            'server' => [
+                'REQUEST_METHOD' => 'GET',
+                'REQUEST_URI' => '/bar?foo',
+                'SERVER_PROTOCOL' => 'HTTP/1.3',
+            ],
+        ];
+
         $result = route([
             'GET' => [
                 '/foo' => function () {
                     return 'bar';
                 },
             ],
-        ], [
-            'server' => [
-                'REQUEST_METHOD' => 'GET',
-                'REQUEST_URI' => '/bar?foo',
-            ],
-        ]);
+        ], $all);
 
-        $this->assertNull($result);
+        $this->assertSame($result, not_found_route()($all));
     }
 
     public function testResponseInterpreter()
