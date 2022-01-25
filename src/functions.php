@@ -26,6 +26,8 @@ use function trim;
 use function urldecode;
 
 /**
+ * Strip the HTTP protocol from a given string.
+ * 
  * @param string $string
  * @return string
  */
@@ -38,6 +40,9 @@ function strip_protocol(string $string): string
 }
 
 /**
+ * Returns a function that can explode strings by
+ * a given delimiter.
+ * 
  * @param string $delimiter
  * @return Closure
  */
@@ -50,6 +55,8 @@ function explode_string_by(string $delimiter): Closure
 }
 
 /**
+ * Returns a copy of $_POST.
+ * 
  * @return array
  */
 function expose_post(): array
@@ -58,6 +65,8 @@ function expose_post(): array
 }
 
 /**
+ * Returns a copy of $_GET.
+ * 
  * @return array
  */
 function expose_get(): array
@@ -66,6 +75,8 @@ function expose_get(): array
 }
 
 /**
+ * Returns a copy of $_REQUEST.
+ * 
  * @return array
  */
 function expose_request(): array
@@ -74,6 +85,8 @@ function expose_request(): array
 }
 
 /**
+ * Returns a copy of $_SERVER.
+ * 
  * @return array
  */
 function expose_server(): array
@@ -82,6 +95,8 @@ function expose_server(): array
 }
 
 /**
+ * Returns a copy of $ARGV.
+ * 
  * @return array
  */
 function expose_argv(): array
@@ -90,6 +105,8 @@ function expose_argv(): array
 }
 
 /**
+ * Returns a copy of $_ENV.
+ * 
  * @return array
  */
 function expose_env(): array
@@ -98,6 +115,10 @@ function expose_env(): array
 }
 
 /**
+ * Eventually we will need to write to $_ENV.
+ * This is one of the only places we violate the strict
+ * laws of functional programming, for practical resaons.
+ * 
  * @param string $key
  * @param mixed $value
  * @return void
@@ -108,6 +129,8 @@ function save_env(string $key, $value): void
 }
 
 /**
+ * Fetch a specfic environment variable from $_ENV.
+ * 
  * @param string $key
  * @return mixed
  */
@@ -117,6 +140,10 @@ function env(string $key)
 }
 
 /**
+ * A handy way to summon all the useful "background" variables
+ * in an immutable form. Each of the "expose_*" functions returns
+ * a _copy_ of the underlying data to avoid accidental edits.
+ * 
  * @return array
  */
 function expose_all(): array
@@ -135,6 +162,8 @@ function expose_all(): array
 }
 
 /**
+ * Return a useful URI string from the given request.
+ * 
  * @param string $request_uri
  * @return string
  */
@@ -144,6 +173,8 @@ function uri(string $request_uri): string
 }
 
 /**
+ * Is mod_rewrite appropriate for this request? E.g. is it a request for a file?
+ * 
  * @param string $uri
  * @param string $public_path
  * @param string $php_sapi
@@ -171,6 +202,10 @@ function url_matches_route(string $uri, string $route_pattern): bool
 }
 
 /**
+ * Returns a function that is able to return response callables for a given request.
+ * Note that array_reduce is chosen over foreach to keep in line with the preference
+ * for recursions over loops in functional programming.
+ * 
  * @param array $routes
  * @return Closure
  */
@@ -182,7 +217,7 @@ function match_request_to_route(array $routes): Closure
         $patterns = array_keys($routes_to_use);
 
         $match = array_reduce($patterns, function ($carry, string $route) use ($url) {
-            if ($carry['match'] === false) {
+            if (empty($carry) || $carry['match'] === false) {
                 $carry = [
                     'route' => $route,
                     'match' => url_matches_route($url, $route),
@@ -190,7 +225,7 @@ function match_request_to_route(array $routes): Closure
             }
 
             return $carry;
-        }, ['route' => null, 'match' => false]);
+        });
 
         if ($match['match'] === true) {
             return $routes_to_use[$match['route']];
@@ -201,9 +236,10 @@ function match_request_to_route(array $routes): Closure
 }
 
 /**
+ * Return the response for a given server request.
+ * 
  * @param array $routes
  * @param array $exposed_all
- * @return mixed
  */
 function route(array $routes, array $exposed_all)
 {
@@ -218,6 +254,9 @@ function route(array $routes, array $exposed_all)
 }
 
 /**
+ * Send a response with a header.
+ * @todo Split out the sending of headers from the sending of a response.
+ * 
  * @param string|null $response
  * @param array $server
  * @return string
@@ -234,6 +273,8 @@ function response(?string $response, array $server): string
 }
 
 /**
+ * List all the PHP files inside a given path.
+ * 
  * @param string $path
  * @return array
  */
@@ -243,6 +284,8 @@ function list_php_files_in_path(string $path): array
 }
 
 /**
+ * Load all the configuration files in a given folder.
+ * 
  * @param string $path
  * @return array
  */
@@ -260,6 +303,9 @@ function fetch_config_files(string $path): array
 }
 
 /**
+ * Provide a generic PDO object for the provided DSN and connection details.
+ * Good for database engine-agnostic applications.
+ * 
  * @param string $dsn
  * @param string|null $username
  * @param string|null $password
@@ -271,6 +317,8 @@ function pdo(string $dsn, ?string $username = null, ?string $password = null): P
 }
 
 /**
+ * Return a PDO object for the provided SQLite file location.
+ * 
  * @param string $path_to_db_file
  * @return PDO
  */
@@ -280,6 +328,8 @@ function sqlite(string $path_to_db_file): PDO
 }
 
 /**
+ * Return a PDO object for the provided MySQL connection details and credentials.
+ * 
  * @param string $host
  * @param string $db_name
  * @param string $username
@@ -292,6 +342,8 @@ function mysql(string $host, string $db_name, string $username, string $password
 }
 
 /**
+ * Generate an accurate path to a file.
+ * 
  * @param string $folder
  * @param string $filename
  * @return string
@@ -302,6 +354,8 @@ function join_file_folder_and_name(string $folder, string $filename): string
 }
 
 /**
+ * Returns a function that generates view responses.
+ * 
  * @param string $view_folder
  * @return Closure
  */
@@ -315,6 +369,8 @@ function view(string $view_folder): Closure
 }
 
 /**
+ * Generate a random string of $length characters.
+ * 
  * @param integer $length
  * @return string
  */
@@ -324,7 +380,7 @@ function generate_random(int $length): string
 }
 
 /**
- * It's important that sessions are strictly read-only.
+ * Activate a session with our cookie.
  * 
  * @param integer $lifetime
  * @return boolean
@@ -337,6 +393,8 @@ function session_begin(int $lifetime = 86400): bool
 }
 
 /**
+ * Save an encryption key to our environment.
+ * 
  * @param string $key
  * @return void
  */
@@ -345,12 +403,19 @@ function bind_encryption_key(string $key): void
     save_env('ENCRYPTION_KEY', $key);
 }
 
+/**
+ * Do we have a CSRF token active right now?
+ *
+ * @return boolean
+ */
 function csrf_exists(): bool
 {
     return array_key_exists('xsrf-token', expose_cookie());
 }
 
 /**
+ * Fetch the currently active CSRF token.
+ * 
  * @return string|null
  */
 function csrf_get(): ?string
@@ -359,6 +424,8 @@ function csrf_get(): ?string
 }
 
 /**
+ * Generate a CSRF token.
+ * 
  * @param string $key
  * @return string
  */
@@ -368,6 +435,8 @@ function csrf_create(string $key): string
 }
 
 /**
+ * Send our CSRF token via the active cookie.
+ * 
  * @param string $csrf
  * @param integer $seconds
  * @return void
@@ -378,6 +447,8 @@ function csrf_send(string $csrf, int $seconds = 3600): void
 }
 
 /**
+ * Have we loaded the project's encryption key?
+ * 
  * @return boolean
  */
 function has_encryption_key(): bool
@@ -388,6 +459,9 @@ function has_encryption_key(): bool
 }
 
 /**
+ * Encrypt a given string with an encryption key.
+ * Returns a base64-encoded encrypted string.
+ * 
  * @param string $string
  * @param string $key
  * @return string
@@ -401,6 +475,8 @@ function encrypt(string $string, string $key): string
 }
 
 /**
+ * Fetch our project's generated encryption key.
+ * 
  * @param string $path
  * @return string
  */
@@ -410,6 +486,8 @@ function get_encryption_key(string $path): string
 }
 
 /**
+ * Decrypts a base64-encoded and encrypted string.
+ * 
  * @param string $encoded
  * @param string $key
  * @return string
@@ -424,6 +502,8 @@ function decrypt(string $encoded, string $key): string
 }
 
 /**
+ * Returns a copy of $_COOKIE.
+ * 
  * @return array
  */
 function expose_cookie(): array
@@ -432,6 +512,8 @@ function expose_cookie(): array
 }
 
 /**
+ * Returns a copy of $_SESSION.
+ * 
  * @return array
  */
 function expose_session(): array
