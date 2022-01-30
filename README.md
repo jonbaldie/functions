@@ -1,5 +1,7 @@
 # PHP Functional Programming Skeleton Project
 
+[![CircleCI](https://circleci.com/gh/jonbaldie/functions/tree/master.svg?style=svg)](https://circleci.com/gh/jonbaldie/functions/tree/master)
+
 **Functions** is a PHP skeleton project built upon a foundation of pure functions. It's a fun personal project of mine but it is unit tested and stable, if you'd like to give it a go.
 
 Just run this to get started:
