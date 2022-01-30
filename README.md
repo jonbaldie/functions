@@ -1,4 +1,4 @@
-# PHP Functional Programming Skeleton Project
+### PHP Functional Programming Skeleton Project
 
 [![CircleCI](https://circleci.com/gh/jonbaldie/functions/tree/master.svg?style=svg)](https://circleci.com/gh/jonbaldie/functions/tree/master)
 
