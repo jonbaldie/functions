@@ -1,15 +1,16 @@
 version: 2.1
 
 jobs:
-  build_and_test:
+  test:
     docker:
       - image: thecodingmachine/php:8.1-v4-cli
     steps:
       - run: git clone https://github.com/jonbaldie/functions.git && cd functions
       - run: cd functions && composer install --ignore-platform-reqs --no-interaction
       - run: cd functions && ./vendor/bin/phpunit ./tests --testdox
+      - run: cd functions && ./vendor/bin/phan
 
 workflows:
-  build_and_test:
+  test:
     jobs:
-      - build_and_test
+      - test
