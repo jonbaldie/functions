@@ -13,7 +13,6 @@ use function explode;
 use function file_get_contents;
 use function glob;
 use function header;
-use function is_callable;
 use function mb_substr;
 use function openssl_random_pseudo_bytes;
 use function parse_url;
@@ -256,17 +255,16 @@ function not_found_route(): Closure
  * 
  * @param array $routes
  * @param array $exposed_all
+ * @return string
  */
-function route(array $routes, array $exposed_all)
+function route(array $routes, array $exposed_all): string
 {
     $callable = match_request_to_route($routes)(
         $exposed_all['server']['REQUEST_METHOD'],
         $exposed_all['server']['REQUEST_URI']
     );
 
-    if (is_callable($callable)) {
-        return $callable($exposed_all);
-    }
+    return $callable($exposed_all);
 }
 
 /**
@@ -274,7 +272,7 @@ function route(array $routes, array $exposed_all)
  * @todo Split out the sending of headers from the sending of a response.
  * @todo Is this even needed? Refactor as necessary.
  * 
- * @param string|null $response
+ * @param string $response
  * @param array $server
  * @return string
  */
