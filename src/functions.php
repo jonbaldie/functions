@@ -157,6 +157,7 @@ function expose_all(): array
         'cookie' => expose_cookie(),
         'session' => expose_session(),
         'view' => view(__DIR__ . '/../views'),
+        'config' => fetch_config_files(__DIR__ . '/../config'),
     ];
 }
 
