@@ -34,7 +34,7 @@ file_put_contents($file, $key);
 /**
  * Give the .key file the appropriate permissions.
  */
-chmod($file, 0600);
+chmod($file, 0666);
 
 /**
  * Inform the user that the process is complete.
