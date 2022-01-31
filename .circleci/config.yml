@@ -8,7 +8,6 @@ jobs:
       - run: git clone https://github.com/jonbaldie/functions.git && cd functions
       - run: cd functions && composer install --ignore-platform-reqs --no-interaction
       - run: cd functions && ./vendor/bin/phpunit ./tests --testdox
-      - run: cd functions && ./vendor/bin/phan
 
 workflows:
   test:
