@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains all of your HTTP routes, 
+ * This file contains all of your HTTP routes,
  * with all GET routes under the 'GET' key, and
  * the same applying to other HTTP request types.
  */
