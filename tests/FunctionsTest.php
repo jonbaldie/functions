@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use PHPUnit\Framework\TestCase;
 use function Functions\bind_encryption_key;
 use function Functions\csrf_create;
@@ -23,6 +25,7 @@ use function Functions\response;
 use function Functions\route;
 use function Functions\save_env;
 use function Functions\strip_protocol;
+use function Functions\strings_identically_equal;
 use function Functions\uri;
 use function Functions\url_matches_route;
 
@@ -224,6 +227,16 @@ class FunctionsTest extends TestCase
     public function testParsedUri()
     {
         $this->assertEquals('foo', uri('foo'));
+    }
+
+    public function testIdenticallyEquals()
+    {
+        $this->assertTrue(strings_identically_equal('foo', 'foo'));
+    }
+
+    public function testNotIdenticallyEqual()
+    {
+        $this->assertFalse(strings_identically_equal('foo', 'bar'));
     }
 
     public function testModRewrite()
