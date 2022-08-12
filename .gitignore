@@ -5,3 +5,4 @@ vendor/
 .idea/
 node_modules/
 public/build/*
+.php-cs-fixer.cache
