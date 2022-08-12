@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Functions;
 
 use Closure;
@@ -172,6 +174,17 @@ function uri(string $request_uri): string
 }
 
 /**
+ * Return whether two strings are identically equal.
+ *
+ * @param string $a
+ * @param string $b
+ */
+function strings_identically_equal(string $a, string $b): bool
+{
+    return $a === $b;
+}
+
+/**
  * Is mod_rewrite appropriate for this request? E.g. is it a request for a file?
  *
  * @param string $uri
@@ -182,7 +195,7 @@ function uri(string $request_uri): string
 function mod_rewrite(string $uri, string $public_path, string $php_sapi): bool
 {
     return $php_sapi === 'cli-server'
-        && $uri !== '/'
+        && ! strings_identically_equal($uri, '/')
         && file_exists(join_file_folder_and_name($public_path, $uri));
 }
 
@@ -242,7 +255,7 @@ function match_request_to_route(array $routes): Closure
 function not_found_route(): Closure
 {
     return function (array $all): string {
-        if (php_sapi_name() !== 'cli') {
+        if (in_array(php_sapi_name(), ['apache', 'apache2handler', 'cgi', 'cgi-fcgi', 'fpm-fcgi', 'litespeed', 'phpdbg'])) {
             header($all['server']['SERVER_PROTOCOL'] . ' 404 Not Found', true, 404);
         }
 

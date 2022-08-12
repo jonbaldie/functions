@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2068f441e02c971116b683b5a615243b",
+    "content-hash": "2707c96bd318a96958bce717b23b0672",
     "packages": [],
     "packages-dev": [
         {
@@ -338,6 +338,71 @@
                 "source": "https://github.com/felixfbecker/php-advanced-json-rpc/tree/v3.2.1"
             },
             "time": "2021-06-11T22:34:44+00:00"
+        },
+        {
+            "name": "league/climate",
+            "version": "3.8.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/climate.git",
+                "reference": "a785a3ac8f584eed4abd45e4e16fe64c46659a28"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/climate/zipball/a785a3ac8f584eed4abd45e4e16fe64c46659a28",
+                "reference": "a785a3ac8f584eed4abd45e4e16fe64c46659a28",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3 || ^8.0",
+                "psr/log": "^1.0 || ^2.0 || ^3.0",
+                "seld/cli-prompt": "^1.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "^1.6.10",
+                "mockery/mockery": "^1.4.2",
+                "phpunit/phpunit": "^9.5.10"
+            },
+            "suggest": {
+                "ext-mbstring": "If ext-mbstring is not available you MUST install symfony/polyfill-mbstring"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\CLImate\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joe Tannenbaum",
+                    "email": "hey@joe.codes",
+                    "homepage": "http://joe.codes/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Craig Duncan",
+                    "email": "git@duncanc.co.uk",
+                    "homepage": "https://github.com/duncan3dc",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP's best friend for the terminal. CLImate allows you to easily output colored text, special formats, and more.",
+            "keywords": [
+                "cli",
+                "colors",
+                "command",
+                "php",
+                "terminal"
+            ],
+            "support": {
+                "issues": "https://github.com/thephpleague/climate/issues",
+                "source": "https://github.com/thephpleague/climate/tree/3.8.2"
+            },
+            "time": "2022-06-18T14:42:08+00:00"
         },
         {
             "name": "microsoft/tolerant-php-parser",
@@ -1486,6 +1551,54 @@
             "time": "2021-07-14T16:41:46+00:00"
         },
         {
+            "name": "rskuipers/php-assumptions",
+            "version": "0.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rskuipers/php-assumptions.git",
+                "reference": "0e569b8ac503e56583642bbe98cccb254a18acbc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rskuipers/php-assumptions/zipball/0e569b8ac503e56583642bbe98cccb254a18acbc",
+                "reference": "0e569b8ac503e56583642bbe98cccb254a18acbc",
+                "shasum": ""
+            },
+            "require": {
+                "league/climate": "^3.1",
+                "nikic/php-parser": "^2.0|^3.0|^4.0"
+            },
+            "require-dev": {
+                "phpspec/prophecy": "~1.0",
+                "phpunit/phpunit": "^5.6"
+            },
+            "bin": [
+                "bin/phpa"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpAssumptions\\": "src/PhpAssumptions"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rick Kuipers",
+                    "email": "io@rskuipers.com"
+                }
+            ],
+            "description": "Static code analysis tool to detect weak assumptions",
+            "support": {
+                "issues": "https://github.com/rskuipers/php-assumptions/issues",
+                "source": "https://github.com/rskuipers/php-assumptions/tree/0.8.1"
+            },
+            "time": "2022-02-15T19:28:15+00:00"
+        },
+        {
             "name": "sabre/event",
             "version": "5.1.4",
             "source": {
@@ -2516,6 +2629,61 @@
             "time": "2020-09-28T06:39:44+00:00"
         },
         {
+            "name": "seld/cli-prompt",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Seldaek/cli-prompt.git",
+                "reference": "b8dfcf02094b8c03b40322c229493bb2884423c5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Seldaek/cli-prompt/zipball/b8dfcf02094b8c03b40322c229493bb2884423c5",
+                "reference": "b8dfcf02094b8c03b40322c229493bb2884423c5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.12.63"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Seld\\CliPrompt\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be"
+                }
+            ],
+            "description": "Allows you to prompt for user input on the command line, and optionally hide the characters they type",
+            "keywords": [
+                "cli",
+                "console",
+                "hidden",
+                "input",
+                "prompt"
+            ],
+            "support": {
+                "issues": "https://github.com/Seldaek/cli-prompt/issues",
+                "source": "https://github.com/Seldaek/cli-prompt/tree/1.0.4"
+            },
+            "time": "2020-12-15T21:32:01+00:00"
+        },
+        {
             "name": "symfony/console",
             "version": "v5.4.3",
             "source": {
@@ -3517,5 +3685,5 @@
         "ext-sodium": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.3.0"
 }
