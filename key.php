@@ -16,7 +16,7 @@ $file = Functions\join_file_folder_and_name(__DIR__, '/.key');
  * If it already exists, warn the user.
  */
 if (file_exists($file)) {
-    exit($silent ? '' : "The '.key' file already exists inside this directory. There is rarely a need to replace your app's encryption key. But if you're sure you want to generate a new one, please delete it first.\n");
+    exit($silent === true ? '' : "The '.key' file already exists inside this directory. There is rarely a need to replace your app's encryption key. But if you're sure you want to generate a new one, please delete it first.\n");
 }
 
 /**
@@ -39,4 +39,4 @@ chmod($file, 0666);
 /**
  * Inform the user that the process is complete.
  */
-exit($silent ? '' : "Your key is now located in the file '.key' inside this directory. *DO NOT EDIT IT!*\n");
+exit($silent === true ? '' : "Your key is now located in the file '.key' inside this directory. *DO NOT EDIT IT!*\n");
