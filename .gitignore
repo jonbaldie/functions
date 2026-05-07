@@ -6,3 +6,8 @@ vendor/
 node_modules/
 public/build/*
 .php-cs-fixer.cache
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
