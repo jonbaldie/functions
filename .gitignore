@@ -6,3 +6,4 @@ vendor/
 node_modules/
 public/build/*
 .php-cs-fixer.cache
+.worktrees/
