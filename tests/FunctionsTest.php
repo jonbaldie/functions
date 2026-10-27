@@ -125,7 +125,12 @@ class FunctionsTest extends TestCase
             ],
         ], $all);
 
-        $this->assertSame($result, not_found_route()($all));
+        $this->assertSame('404 Not Found', $result);
+    }
+
+    public function testNotFoundRouteInCliWithoutHttpServerVariables()
+    {
+        $this->assertSame('404 Not Found', not_found_route()([]));
     }
 
     public function testResponseInterpreter()
