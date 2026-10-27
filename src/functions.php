@@ -509,18 +509,26 @@ function get_encryption_key(string $path): string
 
 /**
  * Decrypts a string encrypted by our encrypt function.
+ * Returns null for malformed ciphertext or failed authentication.
  *
  * @param string $encoded
  * @param string $key
- * @return string
+ * @return string|null
+ * @throws \SodiumException If the key has the wrong length.
  */
-function decrypt(string $encoded, string $key): string
+function decrypt(string $encoded, string $key): ?string
 {
-    $decoded = base64_decode($encoded);
+    $decoded = base64_decode($encoded, true);
+
+    if ($decoded === false || strlen($decoded) < SODIUM_CRYPTO_SECRETBOX_NONCEBYTES + SODIUM_CRYPTO_SECRETBOX_MACBYTES) {
+        return null;
+    }
+
     $nonce = mb_substr($decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, '8bit');
     $ciphertext = mb_substr($decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit');
+    $plaintext = sodium_crypto_secretbox_open($ciphertext, $nonce, $key);
 
-    return sodium_crypto_secretbox_open($ciphertext, $nonce, $key);
+    return $plaintext === false ? null : $plaintext;
 }
 
 /**
