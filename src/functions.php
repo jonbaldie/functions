@@ -255,7 +255,7 @@ function match_request_to_route(array $routes): Closure
 function not_found_route(): Closure
 {
     return function (array $all): string {
-        if (in_array(php_sapi_name(), ['apache', 'apache2handler', 'cgi', 'cgi-fcgi', 'fpm-fcgi', 'litespeed', 'phpdbg'])) {
+        if (! strings_identically_equal(php_sapi_name(), 'cli')) {
             header($all['server']['SERVER_PROTOCOL'] . ' 404 Not Found', true, 404);
         }
 
