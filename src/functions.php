@@ -170,7 +170,7 @@ function expose_all(): array
  */
 function uri(string $request_uri): string
 {
-    return urldecode(parse_url($request_uri, PHP_URL_PATH));
+    return urldecode((string) parse_url($request_uri, PHP_URL_PATH));
 }
 
 /**
