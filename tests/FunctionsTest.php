@@ -254,7 +254,7 @@ class FunctionsTest extends TestCase
 
     public function testModRewrite()
     {
-        $this->assertTrue(mod_rewrite('index.php', __DIR__ . '/../public', 'cli-server'));
+        $this->assertTrue(mod_rewrite('robots.txt', __DIR__ . '/../public', 'cli-server'));
     }
 
     public function testModRewriteFalse()
