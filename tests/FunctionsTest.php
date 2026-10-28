@@ -234,6 +234,14 @@ class FunctionsTest extends TestCase
         $this->assertEquals('foo', uri('foo'));
     }
 
+    public function testUriHandlesMissingAndInvalidPaths()
+    {
+        $this->assertSame('', uri('//foo'));
+        $this->assertSame('', uri('//'));
+        $this->assertSame('/x y', uri('http://host/x%20y?query=1'));
+        $this->assertSame('/x y', uri('/x%20y?query=1'));
+    }
+
     public function testIdenticallyEquals()
     {
         $this->assertTrue(strings_identically_equal('foo', 'foo'));
