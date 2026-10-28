@@ -48,7 +48,7 @@ class HttpRoutingTest extends TestCase
             $this->assertSame('HTTP/1.1 404 Not Found', $http_response_header[0]);
             $this->assertSame('404 Not Found', $body);
 
-            foreach (['/index.php', '/../composer.json', '/%2e%2e/composer.json'] as $path) {
+            foreach (['/index.php', '/../composer.json', '/%2e%2e/composer.json', '/%00'] as $path) {
                 $socket = stream_socket_client(str_replace('http://', 'tcp://', $address[0]));
                 fwrite($socket, "GET {$path} HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n");
                 $response = stream_get_contents($socket);

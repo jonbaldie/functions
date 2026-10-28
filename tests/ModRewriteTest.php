@@ -44,15 +44,9 @@ class ModRewriteTest extends TestCase
         rmdir($this->directory);
     }
 
-    /** @dataProvider paths */
-    public function testHandoff(string $uri, string $sapi, bool $expected): void
+    public function testHandoff(): void
     {
-        $this->assertSame($expected, mod_rewrite($uri, $this->directory . '/public-link', $sapi));
-    }
-
-    public function paths(): array
-    {
-        return [
+        $paths = [
             'nested asset' => ['/build/app.js', 'cli-server', true],
             'internal symlink' => ['/asset-link', 'cli-server', true],
             'other SAPI' => ['/build/app.js', 'fpm-fcgi', false],
@@ -66,5 +60,14 @@ class ModRewriteTest extends TestCase
             'sibling prefix' => ['/../public-other/secret', 'cli-server', false],
             'outside symlink' => ['/outside-link', 'cli-server', false],
         ];
+
+        foreach ($paths as $name => [$uri, $sapi, $expected]) {
+            $this->assertSame($expected, mod_rewrite($uri, $this->directory . '/public-link', $sapi), $name);
+        }
+    }
+
+    public function testDecodedNullByteIsNotHandedOff(): void
+    {
+        $this->assertFalse(mod_rewrite("/\0", $this->public, 'cli-server'));
     }
 }
