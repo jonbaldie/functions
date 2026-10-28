@@ -194,7 +194,7 @@ function strings_identically_equal(string $a, string $b): bool
  */
 function mod_rewrite(string $uri, string $public_path, string $php_sapi): bool
 {
-    if (! strings_identically_equal($php_sapi, 'cli-server') || $uri === '' || $uri === '/') {
+    if (! strings_identically_equal($php_sapi, 'cli-server') || $uri === '' || $uri === '/' || str_contains($uri, "\0")) {
         return false;
     }
 
