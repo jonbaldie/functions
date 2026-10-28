@@ -194,10 +194,26 @@ function strings_identically_equal(string $a, string $b): bool
  */
 function mod_rewrite(string $uri, string $public_path, string $php_sapi): bool
 {
-    return $php_sapi === 'cli-server'
-        && ! strings_identically_equal($uri, '')
-        && ! strings_identically_equal($uri, '/')
-        && file_exists(join_file_folder_and_name($public_path, $uri));
+    if (! strings_identically_equal($php_sapi, 'cli-server') || $uri === '' || $uri === '/' || str_contains($uri, "\0")) {
+        return false;
+    }
+
+    $public = realpath($public_path);
+    if ($public === false || ! is_dir($public)) {
+        return false;
+    }
+
+    $candidate = realpath(join_file_folder_and_name($public, $uri));
+    if ($candidate === false) {
+        return false;
+    }
+
+    $controller = realpath(join_file_folder_and_name($public, 'index.php'));
+    $prefix = rtrim($public, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+    return is_file($candidate)
+        && str_starts_with($candidate, $prefix)
+        && ($controller === false || ! strings_identically_equal($candidate, $controller));
 }
 
 /**
