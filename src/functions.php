@@ -195,6 +195,7 @@ function strings_identically_equal(string $a, string $b): bool
 function mod_rewrite(string $uri, string $public_path, string $php_sapi): bool
 {
     return $php_sapi === 'cli-server'
+        && ! strings_identically_equal($uri, '')
         && ! strings_identically_equal($uri, '/')
         && file_exists(join_file_folder_and_name($public_path, $uri));
 }
