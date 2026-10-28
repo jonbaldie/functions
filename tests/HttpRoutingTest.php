@@ -44,6 +44,10 @@ class HttpRoutingTest extends TestCase
             $this->assertSame('HTTP/1.1 404 Not Found', $http_response_header[0]);
             $this->assertSame('404 Not Found', $body);
 
+            $body = file_get_contents($address[0] . '//foo', false, $context);
+            $this->assertSame('HTTP/1.1 404 Not Found', $http_response_header[0]);
+            $this->assertSame('404 Not Found', $body);
+
             $body = file_get_contents($address[0] . '/', false, $context);
             $this->assertSame('HTTP/1.1 200 OK', $http_response_header[0]);
             $this->assertStringContainsString('It works!', $body);
