@@ -22,3 +22,10 @@ jobs:
       - run: ./vendor/bin/phpunit ./tests --testdox
       - run: ./vendor/bin/phan --allow-polyfill-parser
       - run: ./vendor/bin/phpa ./src
+      - name: Test the FastCGI environment boundary
+        run: |
+          mkdir -p "$RUNNER_TEMP/functions-fpm"
+          cd "$RUNNER_TEMP/functions-fpm"
+          apt-get download php8.1-fpm
+          dpkg-deb -x php8.1-fpm_*.deb .
+          PHP_FPM_BIN="$RUNNER_TEMP/functions-fpm/usr/sbin/php-fpm8.1" python3 "$GITHUB_WORKSPACE/tests/fpm-env.py"
