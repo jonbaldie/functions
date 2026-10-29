@@ -104,14 +104,10 @@ function expose_argv(): array
     return expose_server()['argv'] ?? [];
 }
 
-/**
- * Returns a copy of $_ENV.
- *
- * @return array
- */
+/** Returns the environment with $_ENV values taking precedence. */
 function expose_env(): array
 {
-    return $_ENV;
+    return $_ENV + getenv();
 }
 
 /**
@@ -128,12 +124,6 @@ function save_env(string $key, $value): void
     $_ENV[$key] = $value;
 }
 
-/**
- * Fetch a specfic environment variable from $_ENV.
- *
- * @param string $key
- * @return mixed
- */
 function env(string $key)
 {
     return expose_env()[$key];
