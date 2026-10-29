@@ -307,6 +307,67 @@ class FunctionsTest extends TestCase
         $this->assertEquals('bar', env('foo'));
     }
 
+    public function testProcessOnlyDatabaseHostIsExposed(): void
+    {
+        $previousProcess = getenv('DB_HOST');
+        $hadEnv = array_key_exists('DB_HOST', $_ENV);
+        $previousEnv = $_ENV['DB_HOST'] ?? null;
+
+        try {
+            putenv('DB_HOST=synthetic-process-host');
+            unset($_ENV['DB_HOST']);
+            $warnings = [];
+            set_error_handler(function ($severity, $message) use (&$warnings) {
+                $warnings[] = $severity;
+                return true;
+            });
+            try {
+                $value = env('DB_HOST');
+                $exposed = expose_all()['env'];
+            } finally {
+                restore_error_handler();
+            }
+
+            $this->assertSame([], $warnings);
+            $this->assertSame('synthetic-process-host', $value);
+            $this->assertTrue(array_key_exists('DB_HOST', $exposed), 'DB_HOST is missing from the exposed environment.');
+            $this->assertSame('synthetic-process-host', $exposed['DB_HOST']);
+        } finally {
+            $previousProcess === false ? putenv('DB_HOST') : putenv('DB_HOST=' . $previousProcess);
+            if ($hadEnv) {
+                $_ENV['DB_HOST'] = $previousEnv;
+            } else {
+                unset($_ENV['DB_HOST']);
+            }
+        }
+    }
+
+    public function testSavedValuesOverrideProcessValuesEvenWhenFalsey(): void
+    {
+        $key = 'FUNCTIONS_TEST_ENV_COLLISION';
+        $previousProcess = getenv($key);
+        $hadEnv = array_key_exists($key, $_ENV);
+        $previousEnv = $_ENV[$key] ?? null;
+
+        try {
+            putenv($key . '=synthetic-process-value');
+            foreach (['saved-value', false, null, '', 0] as $saved) {
+                save_env($key, $saved);
+                $this->assertSame($saved, env($key));
+                $exposed = expose_all()['env'];
+                $this->assertTrue(array_key_exists($key, $exposed), 'Saved key is missing from the exposed environment.');
+                $this->assertSame($saved, $exposed[$key]);
+            }
+        } finally {
+            $previousProcess === false ? putenv($key) : putenv($key . '=' . $previousProcess);
+            if ($hadEnv) {
+                $_ENV[$key] = $previousEnv;
+            } else {
+                unset($_ENV[$key]);
+            }
+        }
+    }
+
     /**
      * @return false|string
      */
