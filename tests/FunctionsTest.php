@@ -128,6 +128,44 @@ class FunctionsTest extends TestCase
         $this->assertSame('404 Not Found', $result);
     }
 
+    public function testRoutingWithAbsentMethodReturnsNotFoundWithoutWarnings(): void
+    {
+        $warnings = [];
+        set_error_handler(function ($severity, $message) use (&$warnings) {
+            $warnings[] = $message;
+            return true;
+        });
+        try {
+            $result = route(['GET' => ['/' => fn () => 'home']], [
+                'server' => ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/'],
+            ]);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertSame([], $warnings);
+        $this->assertSame('404 Not Found', $result);
+    }
+
+    public function testRoutingWithEmptyMethodTableReturnsNotFoundWithoutWarnings(): void
+    {
+        $warnings = [];
+        set_error_handler(function ($severity, $message) use (&$warnings) {
+            $warnings[] = $message;
+            return true;
+        });
+        try {
+            $result = route(['POST' => []], [
+                'server' => ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/'],
+            ]);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertSame([], $warnings);
+        $this->assertSame('404 Not Found', $result);
+    }
+
     public function testNotFoundRouteInCliWithoutHttpServerVariables()
     {
         $this->assertSame('404 Not Found', not_found_route()([]));

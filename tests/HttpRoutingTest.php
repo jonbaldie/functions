@@ -17,6 +17,7 @@ class HttpRoutingTest extends TestCase
             $server = proc_open([
                 PHP_BINARY,
                 '-d', 'session.save_path=' . $directory,
+                '-d', 'display_errors=1',
                 '-S', '127.0.0.1:0',
                 '-t', __DIR__ . '/../public',
                 __DIR__ . '/../public/index.php',
@@ -65,6 +66,19 @@ class HttpRoutingTest extends TestCase
             $body = file_get_contents($address[0] . '/', false, $context);
             $this->assertSame('HTTP/1.1 200 OK', $http_response_header[0]);
             $this->assertStringContainsString('It works!', $body);
+
+            $responses = [];
+            foreach (['POST', 'HEAD'] as $method) {
+                $context = stream_context_create([
+                    'http' => ['method' => $method, 'ignore_errors' => true, 'timeout' => 5],
+                ]);
+                $body = file_get_contents($address[0] . '/', false, $context);
+                $responses[$method] = [$http_response_header[0], $body];
+            }
+            $this->assertSame([
+                'POST' => ['HTTP/1.1 404 Not Found', '404 Not Found'],
+                'HEAD' => ['HTTP/1.1 404 Not Found', ''],
+            ], $responses);
         } finally {
             if (is_resource($server)) {
                 proc_terminate($server);
