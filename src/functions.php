@@ -241,7 +241,11 @@ function url_matches_route(string $uri, string $route_pattern): bool
 function match_request_to_route(array $routes): Closure
 {
     return function (string $request_method, string $url) use ($routes): callable {
-        $routes_to_use = $routes[$request_method];
+        $routes_to_use = $routes[$request_method] ?? [];
+
+        if ($routes_to_use === []) {
+            return not_found_route();
+        }
 
         $patterns = array_keys($routes_to_use);
 
