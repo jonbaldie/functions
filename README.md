@@ -22,7 +22,7 @@ Start a local PHP server:
 cd public && php -S localhost:3000 index.php
 ```
 
-Open up https://localhost:3000 and you should see "It works!"
+Open http://localhost:3000 and you should see "It works!"
 
 See the [skeleton exploratory pass](docs/exploratory-testing/2026-10-29-skeleton.md) for setup and routing observations.
 
