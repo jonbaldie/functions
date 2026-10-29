@@ -107,7 +107,11 @@ function expose_argv(): array
 /** Returns the environment with $_ENV values taking precedence. */
 function expose_env(): array
 {
-    return $_ENV + getenv();
+    $local = [];
+    foreach (array_keys(getenv()) as $name) {
+        $local[$name] = getenv((string) $name, true);
+    }
+    return $_ENV + array_filter($local, 'is_string');
 }
 
 function &saved_encryption_key_state(): array
