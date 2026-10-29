@@ -110,18 +110,19 @@ function expose_env(): array
     return $_ENV + getenv();
 }
 
-/**
- * Eventually we will need to write to $_ENV.
- * This is one of the only places we violate the strict
- * laws of functional programming, for practical resaons.
- *
- * @param string $key
- * @param mixed $value
- * @return void
- */
+function &saved_encryption_key_state(): array
+{
+    static $state = [];
+    return $state;
+}
+
 function save_env(string $key, $value): void
 {
     $_ENV[$key] = $value;
+    if ($key === 'ENCRYPTION_KEY') {
+        $state =& saved_encryption_key_state();
+        $state['value'] = $value;
+    }
 }
 
 function env(string $key)
@@ -479,16 +480,14 @@ function csrf_send(string $csrf, int $seconds = 3600): void
     setcookie('xsrf-token', $csrf, time() + $seconds);
 }
 
-/**
- * Have we loaded the project's encryption key?
- *
- * @return boolean
- */
 function has_encryption_key(): bool
 {
-    $env = expose_env();
+    $state = saved_encryption_key_state();
 
-    return empty($env['ENCRYPTION_KEY']) === false;
+    return array_key_exists('value', $state)
+        && !empty($state['value'])
+        && array_key_exists('ENCRYPTION_KEY', $_ENV)
+        && $_ENV['ENCRYPTION_KEY'] === $state['value'];
 }
 
 /**
