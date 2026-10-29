@@ -1,0 +1,5 @@
+Check after both server processes were stopped:
+PID 1905754 absent
+PID 1906158 absent
+Listening sockets on port 39173:
+State Recv-Q Send-Q Local Address:Port Peer Address:Port

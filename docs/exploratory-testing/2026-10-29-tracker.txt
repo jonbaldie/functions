@@ -1,0 +1,13 @@
+Issues 18-23 were present before the pass; 33-35 were filed during it. Snapshot after filing:
+35	README directs local users to HTTPS although the PHP server only serves HTTP	open	bug,needs-triage
+34	Default page omits required Webpack entrypoint chunks, so application JavaScript never runs	open	bug,needs-triage
+33	Unconfigured HTTP methods crash instead of returning a not-found response	open	bug,needs-triage
+23	test issue	closed
+22	decrypt() throws TypeError instead of signalling failure on tampered ciphertext or wrong key	closed	bug,ready-for-agent
+21	Setting ENCRYPTION_KEY in the process environment crashes every request (getenv() overrides save_env)	open	bug,ready-for-agent
+20	GET /index.php (and /../<file>) renders a blank page with Notice+Warning because mod_rewrite() hands off for the front controller itself	closed	bug,ready-for-agent
+19	Unknown routes return HTTP 200 under the built-in server (cli-server missing from not_found_route allowlist)	closed	bug,ready-for-agent
+18	uri(): request with empty path segment (e.g. GET //foo) crashes with uncaught TypeError	closed	bug,ready-for-agent
+
+Closed issues labelled wontfix:
+[]
