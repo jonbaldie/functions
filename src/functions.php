@@ -104,36 +104,31 @@ function expose_argv(): array
     return expose_server()['argv'] ?? [];
 }
 
-/**
- * Returns a copy of $_ENV.
- *
- * @return array
- */
+/** Returns the environment with $_ENV values taking precedence. */
 function expose_env(): array
 {
-    return $_ENV;
+    $local = [];
+    foreach (array_keys(getenv()) as $name) {
+        $local[$name] = getenv((string) $name, true);
+    }
+    return $_ENV + array_filter($local, 'is_string');
 }
 
-/**
- * Eventually we will need to write to $_ENV.
- * This is one of the only places we violate the strict
- * laws of functional programming, for practical resaons.
- *
- * @param string $key
- * @param mixed $value
- * @return void
- */
+function &saved_encryption_key_state(): array
+{
+    static $state = [];
+    return $state;
+}
+
 function save_env(string $key, $value): void
 {
     $_ENV[$key] = $value;
+    if ($key === 'ENCRYPTION_KEY') {
+        $state =& saved_encryption_key_state();
+        $state['value'] = $value;
+    }
 }
 
-/**
- * Fetch a specfic environment variable from $_ENV.
- *
- * @param string $key
- * @return mixed
- */
 function env(string $key)
 {
     return expose_env()[$key];
@@ -489,16 +484,14 @@ function csrf_send(string $csrf, int $seconds = 3600): void
     setcookie('xsrf-token', $csrf, time() + $seconds);
 }
 
-/**
- * Have we loaded the project's encryption key?
- *
- * @return boolean
- */
 function has_encryption_key(): bool
 {
-    $env = expose_env();
+    $state = saved_encryption_key_state();
 
-    return empty($env['ENCRYPTION_KEY']) === false;
+    return array_key_exists('value', $state)
+        && !empty($state['value'])
+        && array_key_exists('ENCRYPTION_KEY', $_ENV)
+        && $_ENV['ENCRYPTION_KEY'] === $state['value'];
 }
 
 /**

@@ -2,11 +2,8 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-/**
- * Fetch and bind our encryption key to the session.
- */
-Functions\has_encryption_key() || Functions\bind_encryption_key(
-    $key = Functions\get_encryption_key(__DIR__ . '/../')
+Functions\bind_encryption_key(
+    Functions\get_encryption_key(__DIR__ . '/../')
 );
 
 /**

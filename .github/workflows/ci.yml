@@ -10,7 +10,7 @@ permissions:
 jobs:
   test:
     name: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -22,3 +22,11 @@ jobs:
       - run: ./vendor/bin/phpunit ./tests --testdox
       - run: ./vendor/bin/phan --allow-polyfill-parser
       - run: ./vendor/bin/phpa ./src
+      - name: Test the FastCGI environment boundary
+        run: |
+          mkdir -p "$RUNNER_TEMP/functions-fpm"
+          cd "$RUNNER_TEMP/functions-fpm"
+          sudo apt-get update
+          apt-get download php8.3-fpm
+          dpkg-deb -x php8.3-fpm_*.deb .
+          PHP_FPM_BIN="$RUNNER_TEMP/functions-fpm/usr/sbin/php-fpm8.3" python3 "$GITHUB_WORKSPACE/tests/fpm-env.py"
