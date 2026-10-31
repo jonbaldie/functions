@@ -3,6 +3,7 @@
     "alpinejs": "^2.7.3",
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
+    "core-js": "^3",
     "vue": "2"
   },
   "devDependencies": {
