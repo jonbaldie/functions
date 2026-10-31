@@ -31,6 +31,7 @@ jobs:
           python3 tests/entrypoint.py
           corepack yarn encore production
           python3 tests/entrypoint.py
+          bash tests/asset-polyfills.sh
       - run: ./vendor/bin/phpunit ./tests --testdox
       - run: ./vendor/bin/phan --allow-polyfill-parser
       - run: ./vendor/bin/phpa ./src
