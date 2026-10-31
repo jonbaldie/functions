@@ -19,6 +19,18 @@ jobs:
           extensions: mbstring, openssl, pdo, sodium, dom, xml, xmlwriter
           coverage: none
       - run: composer install --no-interaction --prefer-dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: corepack yarn install --frozen-lockfile
+      - name: Test the welcome page entrypoint
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: |
+          corepack yarn encore dev
+          python3 tests/entrypoint.py
+          corepack yarn encore production
+          python3 tests/entrypoint.py
       - run: ./vendor/bin/phpunit ./tests --testdox
       - run: ./vendor/bin/phan --allow-polyfill-parser
       - run: ./vendor/bin/phpa ./src
