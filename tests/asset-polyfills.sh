@@ -11,4 +11,5 @@ printf '\ntypeof axios;\n' >> "$tmp/assets/app.js"
 ln -s "$root/node_modules" "$tmp/node_modules"
 cd "$tmp"
 ./node_modules/.bin/encore dev
+grep -q 'core-js/modules/es.symbol' public/build/app.js
 ./node_modules/.bin/encore production
