@@ -89,6 +89,27 @@ class FunctionsTest extends TestCase
         $this->assertIsCallable($function('GET', '/foo?bar'));
     }
 
+    public function testRoutingPreservesOrderMethodsAndNormalization(): void
+    {
+        $routes = [
+            'GET' => [
+                '/foo/' => fn () => 'first',
+                'foo' => fn () => 'second',
+                '/' => fn () => 'home',
+                123 => fn () => 'numeric',
+            ],
+            'POST' => ['/foo' => fn () => 'posted'],
+        ];
+        $match = match_request_to_route($routes);
+
+        $this->assertSame('first', $match('GET', '///foo///?'.str_repeat('x', 8000))([]));
+        $this->assertSame('home', $match('GET', '///?query')([]));
+        $this->assertSame('numeric', $match('GET', '/123')([]));
+        $this->assertSame('posted', $match('POST', '/foo')([]));
+        $this->assertSame('404 Not Found', $match('GET', '/missing?foo')([]));
+        $this->assertSame('404 Not Found', $match('DELETE', '/foo')([]));
+    }
+
     public function testRoutingFunction()
     {
         $result = route([

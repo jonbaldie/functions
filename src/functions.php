@@ -211,6 +211,11 @@ function mod_rewrite(string $uri, string $public_path, string $php_sapi): bool
         && ($controller === false || ! strings_identically_equal($candidate, $controller));
 }
 
+function normalized_request_path(string $uri): string
+{
+    return trim(explode('?', $uri, 2)[0], '/');
+}
+
 /**
  * @param string $uri
  * @param string $route_pattern
@@ -218,17 +223,11 @@ function mod_rewrite(string $uri, string $public_path, string $php_sapi): bool
  */
 function url_matches_route(string $uri, string $route_pattern): bool
 {
-    $exploded = explode_string_by('?')($uri);
-    $uri = trim($exploded[0], '/');
-    $route_pattern = trim($route_pattern, '/');
-
-    return "/{$uri}" === "/{$route_pattern}";
+    return normalized_request_path($uri) === trim($route_pattern, '/');
 }
 
 /**
  * Returns a function that is able to return response callables for a given request.
- * Note that array_reduce is chosen over foreach to keep in line with the preference
- * for recursions over loops in functional programming.
  *
  * @param array $routes
  * @return Closure
@@ -242,21 +241,11 @@ function match_request_to_route(array $routes): Closure
             return not_found_route();
         }
 
-        $patterns = array_keys($routes_to_use);
-
-        $match = array_reduce($patterns, function ($carry, string $route) use ($url) {
-            if (empty($carry) || $carry['match'] === false) {
-                $carry = [
-                    'route' => $route,
-                    'match' => url_matches_route($url, $route),
-                ];
+        $path = normalized_request_path($url);
+        foreach ($routes_to_use as $route => $handler) {
+            if ($path === trim((string) $route, '/')) {
+                return $handler;
             }
-
-            return $carry;
-        });
-
-        if ($match['match'] === true) {
-            return $routes_to_use[$match['route']];
         }
 
         return not_found_route();
