@@ -43,6 +43,7 @@ jobs:
           corepack yarn encore production
           python3 tests/entrypoint.py
           bash tests/asset-polyfills.sh
+      - run: php -d variables_order=GPCS tests/env-scaling.php
       - run: ./vendor/bin/phpunit ./tests --testdox
       - run: ./vendor/bin/phan --allow-polyfill-parser
       - run: ./vendor/bin/phpa ./src
