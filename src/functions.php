@@ -107,6 +107,10 @@ function expose_argv(): array
 /** Returns the environment with $_ENV values taking precedence. */
 function expose_env(): array
 {
+    if (PHP_SAPI === 'cli') {
+        return $_ENV + getenv();
+    }
+
     $local = [];
     foreach (array_keys(getenv()) as $name) {
         $local[$name] = getenv((string) $name, true);
@@ -131,7 +135,16 @@ function save_env(string $key, $value): void
 
 function env(string $key)
 {
-    return expose_env()[$key];
+    if (array_key_exists($key, $_ENV)) {
+        return $_ENV[$key];
+    }
+
+    $local = getenv($key, true);
+    if (is_string($local)) {
+        return $local;
+    }
+
+    return [][$key];
 }
 
 /**

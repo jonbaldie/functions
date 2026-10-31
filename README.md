@@ -26,6 +26,8 @@ Open http://localhost:3000 and you should see "It works!"
 
 See the [skeleton exploratory pass](docs/exploratory-testing/2026-10-29-skeleton.md) for setup and routing observations.
 
+`expose_env()` uses a single process-environment snapshot under PHP CLI. Other SAPIs retain per-key local lookups so FastCGI request variables do not enter the snapshot unless PHP has placed them in `$_ENV`. `$_ENV` values take precedence, including `false` and `null`.
+
 Wait, what's a "pure function"?
 
 Pure functions map variables from an input and produce an output, with no observable side-effects. They're easily testable, can be moved anywhere, and used in any context with no unexpected effects. This concept comes from functional programming languages like Clojure, Scala, or Haskell.
