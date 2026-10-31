@@ -110,6 +110,18 @@ class FunctionsTest extends TestCase
         $this->assertSame('404 Not Found', $match('DELETE', '/foo')([]));
     }
 
+    public function testRoutingLongQueryMissReturnsNotFound(): void
+    {
+        $routes = [];
+        for ($i = 0; $i < 100; $i++) {
+            $routes['/route' . $i] = fn () => 'matched';
+        }
+
+        $match = match_request_to_route(['GET' => $routes]);
+
+        $this->assertSame('404 Not Found', $match('GET', '/missing?' . str_repeat('x', 8000))([]));
+    }
+
     public function testRoutingFunction()
     {
         $result = route([
