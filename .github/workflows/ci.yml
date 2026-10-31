@@ -8,6 +8,17 @@ permissions:
   contents: read
 
 jobs:
+  routing-trace:
+    name: routing trace regression
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: xdebug
+      - run: php -d xdebug.mode=trace -d xdebug.start_with_request=no tests/routing-trace.php
+
   test:
     name: test
     runs-on: ubuntu-24.04
