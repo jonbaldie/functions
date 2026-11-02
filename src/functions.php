@@ -109,7 +109,9 @@ function expose_env(): array
 {
     $local = [];
     foreach (array_keys(getenv()) as $name) {
-        $local[$name] = getenv((string) $name, true);
+        if (!array_key_exists($name, $_ENV)) {
+            $local[$name] = getenv((string) $name, true);
+        }
     }
     return $_ENV + array_filter($local, 'is_string');
 }
@@ -131,7 +133,20 @@ function save_env(string $key, $value): void
 
 function env(string $key)
 {
-    return expose_env()[$key];
+    if (array_key_exists($key, $_ENV)) {
+        return $_ENV[$key];
+    }
+
+    $plainCliKey = strings_identically_equal(PHP_SAPI, 'cli') && !strings_identically_equal(PHP_OS_FAMILY, 'Windows')
+        && preg_match('/\A[A-Za-z_][A-Za-z0-9_]*\z/', $key) === 1;
+    if ($plainCliKey || array_key_exists($key, getenv())) {
+        $value = getenv($key, true);
+        if (is_string($value)) {
+            return $value;
+        }
+    }
+
+    return $_ENV[$key];
 }
 
 /**
