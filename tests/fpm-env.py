@@ -124,7 +124,11 @@ def main():
 require %s;
 putenv('FUNCTIONS21_ADDED=runtime');
 \\Functions\\save_env('FUNCTIONS21_SAVED', false);
+\\Functions\\save_env('FUNCTIONS21_NULL', null);
 $env = \\Functions\\expose_env();
+set_error_handler(function () { return true; });
+$directHeader = \\Functions\\env('HTTP_X_PROBE');
+restore_error_handler();
 echo json_encode([
     'header_absent' => !array_key_exists('HTTP_X_PROBE', $env),
     'header_visible' => ($_ENV['HTTP_X_PROBE'] ?? null) === 'untrusted'
@@ -133,12 +137,25 @@ echo json_encode([
     'runtime_visible' => ($env['FUNCTIONS21_ADDED'] ?? null) === 'runtime',
     'saved_false' => array_key_exists('FUNCTIONS21_SAVED', $env)
         && $env['FUNCTIONS21_SAVED'] === false,
+    'direct_marker' => \\Functions\\env('FUNCTIONS21_MARKER') === 'synthetic',
+    'request_marker' => ($env['FUNCTIONS21_MARKER'] ?? null) === 'request-injected'
+        && \\Functions\\env('FUNCTIONS21_MARKER') === 'request-injected',
+    'direct_runtime' => \\Functions\\env('FUNCTIONS21_ADDED') === 'runtime',
+    'direct_saved_false' => \\Functions\\env('FUNCTIONS21_SAVED') === false,
+    'direct_saved_null' => \\Functions\\env('FUNCTIONS21_NULL') === null,
+    'direct_header_absent' => $directHeader === null,
+    'direct_header_visible' => $directHeader === 'untrusted',
 ]);
 ''' % source)
         results = {order: probe(binary, directory, order) for order in ('GPCS', 'EGPCS')}
     checks = [('GPCS', 'header_absent'), ('GPCS', 'marker_local'),
               ('GPCS', 'runtime_visible'), ('GPCS', 'saved_false'),
-              ('EGPCS', 'header_visible')]
+              ('GPCS', 'direct_marker'), ('GPCS', 'direct_runtime'),
+              ('GPCS', 'direct_saved_false'), ('GPCS', 'direct_saved_null'),
+              ('GPCS', 'direct_header_absent'), ('EGPCS', 'header_visible'),
+              ('EGPCS', 'direct_header_visible'), ('EGPCS', 'direct_runtime'),
+              ('EGPCS', 'direct_saved_false'), ('EGPCS', 'direct_saved_null'),
+              ('EGPCS', 'request_marker')]
     failed = False
     for order, check in checks:
         passed = results[order].get(check) is True

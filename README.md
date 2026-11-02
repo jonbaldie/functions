@@ -26,6 +26,8 @@ Open http://localhost:3000 and you should see "It works!"
 
 See the [skeleton exploratory pass](docs/exploratory-testing/2026-10-29-skeleton.md) for setup and routing observations.
 
+`expose_env()` gives `$_ENV` values precedence and skips process lookups for those keys. It still looks up each other process key separately, so a large environment with few `$_ENV` overrides can take quadratic time on glibc. `env()` reads one key without rebuilding the full merged snapshot.
+
 Wait, what's a "pure function"?
 
 Pure functions map variables from an input and produce an output, with no observable side-effects. They're easily testable, can be moved anywhere, and used in any context with no unexpected effects. This concept comes from functional programming languages like Clojure, Scala, or Haskell.
