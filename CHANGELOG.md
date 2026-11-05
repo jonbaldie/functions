@@ -2,7 +2,7 @@
 
 ## 3.0.1
 
-- Skip process environment lookups for keys already present in `$_ENV`, and avoid rebuilding the full environment snapshot for `env()`.
+- Skip process environment lookups for keys already present in `$_ENV`. `env()` no longer builds the merged `expose_env()` snapshot, though it can still enumerate process keys.
 - Full snapshots can still take quadratic time on glibc when process keys are not overridden by `$_ENV`. See [issue #40](https://github.com/jonbaldie/functions/issues/40).
 
 ## 3.0.0
