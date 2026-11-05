@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.1
+
+- Skip process environment lookups for keys already present in `$_ENV`, and avoid rebuilding the full environment snapshot for `env()`.
+- Full snapshots can still take quadratic time on glibc when process keys are not overridden by `$_ENV`. See [issue #40](https://github.com/jonbaldie/functions/issues/40).
+
 ## 3.0.0
 
 - `has_encryption_key()` normally requires a non-empty key saved with `save_env('ENCRYPTION_KEY', ...)` or `bind_encryption_key()`, and the current `$_ENV` value must match it. Setting `$_ENV['ENCRYPTION_KEY']` directly no longer marks the key as bound. The new `saved_encryption_key_state()` helper exposes mutable state and is not a security boundary.
