@@ -37,3 +37,9 @@ cp -rf source dest          # NOT: cp -r source dest
 - `ssh` - use `-o BatchMode=yes` to fail instead of prompting
 - `apt-get` - use `-y` flag
 - `brew` - use `HOMEBREW_NO_AUTO_UPDATE=1` env var
+
+## Cursor Cloud specific instructions
+
+- Keep `php` on 8.1 (`update-alternatives --set php /usr/bin/php8.1`). `composer.lock` resolves on 8.1; `phpspec/prophecy` v1.15.0 requires PHP below 8.2.
+- Webpack Encore 0.33 (webpack 4) on Node 17+ needs `NODE_OPTIONS=--openssl-legacy-provider` for `yarn encore dev`.
+- `composer install` writes `.key` via `key.php`. The dev server is `php -S 0.0.0.0:3000 index.php` from `public/`. Homepage: `http://127.0.0.1:3000/` (`It works!`). Checks: `./vendor/bin/phpunit ./tests --testdox`, `./vendor/bin/phan --allow-polyfill-parser`, `./vendor/bin/phpa ./src`.
