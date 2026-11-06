@@ -1,0 +1,75 @@
+Browser follow-up, 2026-11-06
+Base: 95ddae209fca6eb1ddcebd8700548d7d89f0a910 (report PR #54)
+
+Environment and setup
+  PHP 8.5.4, Node 22.22.1, Yarn 1.22.22, Playwright 1.56.1,
+  Chromium Headless Shell 141.0.7390.37, Ubuntu 26.04.1 x64.
+  Composer installed composer.lock with --ignore-platform-req=php because the
+  locked Prophecy version does not accept PHP 8.5. Yarn installed yarn.lock with
+  --frozen-lockfile --non-interactive. All caches, drivers, browser files, and
+  generated assets were inside the worktree. The separate Playwright driver was
+  installed with npm at the exact version shown above, not from the project lockfile.
+  Playwright did not recognize Ubuntu 26.04. PLAYWRIGHT_HOST_PLATFORM_OVERRIDE
+  selected the Ubuntu 24.04 Chromium download. The missing shared libraries were
+  downloaded as Ubuntu packages and extracted into the worktree. LD_LIBRARY_PATH
+  selected those libraries without changing the host. Chromium ran with --no-sandbox.
+  No Docker image or container was created. The local browser only visited the
+  loopback PHP server. The downloaded Ubuntu packages were:
+    libasound2t64 1.2.15.3-1ubuntu1.1 sha256 96e20cf5c9095ef54ba46fccffea5c01cf2de17a1012c5683a67e43504a6d726
+    libatk-bridge2.0-0t64 2.60.4-0ubuntu0.1 sha256 c634e1fd25dff5d0ff5384bf3ac9d784725e776448591283cee67deaced29c27
+    libatk1.0-0t64 2.60.4-0ubuntu0.1 sha256 6308ae8c10599780f0e672a39930c07639523bf3f7406f90ee7dada6acd505a0
+    libatspi2.0-0t64 2.60.4-0ubuntu0.1 sha256 6db6e1d7d40f15d38ab5ec302463ac502a057560294d9c73ede22998f733fbd8
+    libgbm1 26.0.8-1ubuntu0.3 sha256 5d2d1eaf0f72c5a2c4aef692e5660c6fa61e46542c4d9cb5593ba8bd020b2eea
+    libxcomposite1 1:0.4.6-1build1 sha256 b8557d5aba1e575acfb169f47e798c449c8a5ca05846861f1480724d4cfc5ce3
+    libxdamage1 1:1.1.7-1 sha256 dd751597c6216105774a93769972d1cb6dad5fd1ba91f090197d7acc85c406cb
+    libxres1 2:1.2.1-1build2 sha256 c7794a754880ef7bde4a73c0257dd48d8e3f387ee1618ba97f8e5cf5cdd7c80f
+
+Actions
+  1. Build the unmodified development entrypoint with:
+       NODE_OPTIONS=--openssl-legacy-provider corepack yarn encore dev
+  2. Load the page in a new headless browser context. Check the heading, script
+     response, JavaScript errors, Alpine global, and cookies. Reload and compare
+     cookie values, not their ordering in a cookie file.
+  3. Make this disposable developer variation in the worktree:
+       append to assets/app.js:
+         document.documentElement.dataset.exploratoryEntry = 'executed';
+       append inside the body of views/index.html:
+         <div x-data="{ count: 0 }"><button id="counter" x-on:click="count++" x-text="count"></button></div>
+  4. Build development assets and run the browser check in a fresh context. Click
+     the counter and reload the page. Check that the entrypoint marker appears and
+     the counter resets on reload. The counter is intentionally client-side state.
+  5. Build production assets with:
+       NODE_OPTIONS=--openssl-legacy-provider corepack yarn encore production
+     Repeat the custom check twice with a new server and browser context each time.
+  6. Restore both tracked files, rebuild unmodified production assets, and repeat
+     the unmodified browser check. No product edits were committed.
+
+The browser driver and cleanup wrapper are retained as
+2026-11-06-browser-driver.cjs and 2026-11-06-browser-run.sh. Copy them to
+.scratch/browser-journey.js and .scratch/run-browser.sh respectively after
+installing the driver in .scratch/driver and the browser in .scratch/browsers.
+The wrapper expects the extracted libraries in .scratch/libs/usr/lib/x86_64-linux-gnu.
+The driver uses port 39874 and refuses to start through the wrapper if it is occupied.
+The wrapper owns the process group with an exit trap. The driver closes its browser
+and terminates and waits for its PHP server, including on SIGINT and SIGTERM.
+
+Observed output
+  Unmodified development:
+    page=200 heading=It works! Alpine=object assets=/build/app.js:200,/build/app.js:200 errors=0
+    cookie names=PHPSESSID,xsrf-token values unchanged after reload
+  Custom development:
+    custom entrypoint executed; Alpine counter 0 -> 1
+    reload: custom entrypoint executed again; Alpine counter reset to 0
+    page=200 heading=It works! Alpine=object assets=/build/app.js:200,/build/app.js:200 errors=0
+    cookie names=PHPSESSID,xsrf-token values unchanged after reload
+  Custom production and a fresh-state replay: same results as custom development.
+  Unmodified production: same results as unmodified development.
+
+Teardown
+  Browser owner process groups: 2686833, 2688255, 2688662, 2688816, 2689187.
+  PHP server PIDs: 2686915, 2688300, 2688708, 2688838, 2689207.
+  Each run logged browser closure, server termination, and a clear port. A later
+  ps check found none of these PIDs or any headless_shell process, and ss showed
+  no listener on 39874. The browser and downloaded libraries are confined to the
+  disposable worktree. Remove the worktree after publication. No shared resources
+  were stopped.
