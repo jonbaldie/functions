@@ -1,0 +1,60 @@
+Functions exploratory evidence, 2026-11-06
+Base: 8c410a4c09bdedf7ef5e8c7e251c139cdf1b65fd
+
+Setup
+  composer install --no-interaction --prefer-dist
+    failed: phpspec/prophecy v1.15.0 requires PHP <8.2; host PHP is 8.5.4
+    warned that composer.lock is not up to date with composer.json
+  composer install --no-interaction --prefer-dist --ignore-platform-req=php
+    succeeded using the lockfile; generated .key
+  corepack yarn install --frozen-lockfile --non-interactive
+    succeeded with Yarn 1.22.22
+  corepack yarn encore dev
+    failed: ERR_OSSL_EVP_UNSUPPORTED, Node 22.22.1
+  NODE_OPTIONS=--openssl-legacy-provider corepack yarn encore dev
+    succeeded
+  NODE_OPTIONS=--openssl-legacy-provider corepack yarn encore production
+    succeeded
+  ./vendor/bin/phpunit tests --testdox
+    OK (63 tests, 226 assertions)
+
+Key generation replay
+  After installing dependencies, create two disposable directories within the worktree.
+  Copy key.php into each and link each vendor path to the worktree's vendor directory.
+  In each directory run:
+    umask 077
+    php key.php
+    stat -c '%a' .key
+    sha256sum .key
+    php key.php
+    sha256sum .key
+  Both fresh keys had mode 666. Each second invocation warned and preserved its key.
+  For a permissions check, make one disposable directory mode 755, enter it, and run:
+    sudo -n -u nobody sh -c 'dd if=.key of=/dev/null status=none && printf X >> .key'
+  This succeeded; the disposable key grew from 44 to 45 bytes. Restore the directory mode
+  and discard the key. No key bytes or hashes are retained in this evidence.
+  A consuming PHP script used Functions\get_encryption_key, encrypt, and decrypt.
+  Round-trip: ok. Wrong key: NULL. A one-byte ciphertext modification: NULL.
+
+HTTP replay
+  php -d display_errors=1 -S 127.0.0.1:39873 -t public public/index.php
+  GET /                  200, welcome heading
+  GET /?a=1              200, welcome heading
+  GET /missing           404, 404 Not Found
+  POST /                 404, 404 Not Found
+  GET /robots.txt        200, User-agent: * and Disallow:
+  GET /build/app.js      200, 346269 bytes (development build)
+  Repeated after a server restart with the same results.
+  Cookie jar comparison by name: PHPSESSID unchanged; xsrf-token unchanged.
+  Comparing the raw jar files initially reported a difference because cookie order changed.
+
+Asset entrypoints
+  Development entrypoint: ["/build/app.js"]. HTML contains all entrypoints: true.
+  Production entrypoint: ["/build/app.js"]. HTML contains all entrypoints: true.
+  Production entrypoint files exist: true.
+
+Teardown
+  Server PIDs registered with the shell exit trap: 2636539 and 2636576.
+  Each was killed and waited for before starting the next. ps found neither PID.
+  ss -ltn 'sport = :39873' showed no listener after teardown.
+  No browser, container, Docker image, or volume was created.
