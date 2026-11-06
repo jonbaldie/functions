@@ -24,7 +24,7 @@ cd public && php -S localhost:3000 index.php
 
 Open http://localhost:3000 and you should see "It works!"
 
-See the [skeleton exploratory pass](docs/exploratory-testing/2026-10-29-skeleton.md) for setup and routing observations.
+See the [skeleton exploratory pass](docs/exploratory-testing/2026-10-29-skeleton.md) and the [2026-11-06 exploratory pass](docs/exploratory-testing/2026-11-06-functions.md) for setup, routing, asset, and key observations.
 
 `expose_env()` gives `$_ENV` values precedence and skips process lookups for those keys. It still looks up each other process key separately, so a large environment with few `$_ENV` overrides can take quadratic time on glibc. `env()` reads one key without rebuilding the full merged snapshot.
 
