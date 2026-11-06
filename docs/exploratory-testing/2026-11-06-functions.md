@@ -16,7 +16,9 @@ With the generated key and development assets, the built-in PHP server returned 
 
 ## Build frontend assets
 
-With the OpenSSL workaround, both development and production builds listed `/build/app.js` as their sole JavaScript entrypoint. The checked-in welcome page referenced that entrypoint, and the production file existed. The development bundle was served over HTTP. This checks file inclusion and serving, not JavaScript execution in a browser. No browser was available in the test environment.
+With the OpenSSL workaround, both development and production builds listed `/build/app.js` as their sole JavaScript entrypoint. The checked-in welcome page referenced that entrypoint, and the production file existed. The development bundle was served over HTTP. The initial pass checked file inclusion and serving, not JavaScript execution in a browser.
+
+A later [browser follow-up](2026-11-06-browser-evidence.txt) used Chromium 141 with locally extracted libraries. The unmodified development and production pages loaded their scripts without JavaScript errors. A temporary developer variation added an entrypoint marker and an Alpine counter. Both builds executed the marker, incremented the counter, and reset it on reload. The production variation repeated with a fresh server and browser context. No new bug was confirmed.
 
 ## Evidence and limits
 
@@ -24,4 +26,4 @@ The [redacted evidence](2026-11-06-functions-evidence.txt) records commands, out
 
 The tracker was checked for open and closed issues, comments, labels, and prior rejections before filing. The key permission finding had no matching issue in that check. Existing [issue #40](https://github.com/jonbaldie/functions/issues/40) covers environment snapshot performance and was outside this pass. Existing [issue #52](https://github.com/jonbaldie/functions/issues/52) covers the locked PHPUnit advisory. An existing worktree for issue #40 was left untouched.
 
-Production servers, alternate operating systems, browser execution, database integration, and deployment were not exercised. No other candidates remain unresolved. Product fixes are outside this report.
+Production servers, alternate operating systems, database integration, and deployment were not exercised. No other candidates remain unresolved. Product fixes are outside this report.
