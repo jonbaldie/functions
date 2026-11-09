@@ -43,6 +43,7 @@ jobs:
           corepack yarn encore production
           python3 tests/entrypoint.py
           bash tests/asset-polyfills.sh
+      - run: php tests/key-generator.php
       - run: php -d variables_order=GPCS tests/env-operations.php
       - run: php -d variables_order=EGPCS tests/env-operations.php
       - run: python3 tests/env-duplicates.py
