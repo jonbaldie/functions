@@ -58,6 +58,18 @@ try {
         check($stdout === '', 'Silent failure wrote success output');
         check(!file_exists($root . '/.key'), 'Failure left a key');
     }
+    $command = 'ulimit -f 0; trap "" XFSZ; exec ' . escapeshellarg(PHP_BINARY)
+        . ' ' . escapeshellarg($root . '/key.php') . ' --silent';
+    $process = proc_open(['/bin/sh', '-c', $command], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+    $stdout = stream_get_contents($pipes[1]);
+    $stderr = stream_get_contents($pipes[2]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    $status = proc_close($process);
+    check($status !== 0 && $stderr !== '', 'Write failure was not reported');
+    check($stdout === '', 'Write failure printed success');
+    check(!file_exists($root . '/.key'), 'Write failure left a key');
+    check(glob($root . '/.key-*') === [], 'Write failure left a temporary file');
     echo "Key generation checks passed.\n";
 } finally {
     chmod($root, 0700);

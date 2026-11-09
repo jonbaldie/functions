@@ -26,15 +26,27 @@ $key = base64_encode(
     sodium_crypto_secretbox_keygen()
 );
 
-/**
- * Write the key to the file.
- */
-file_put_contents($file, $key);
+$temporary = @tempnam(__DIR__, '.key-');
+if ($temporary === false) {
+    fwrite(STDERR, "Could not create a private temporary key file.\n");
+    exit(1);
+}
 
-/**
- * Give the .key file the appropriate permissions.
- */
-chmod($file, 0666);
+$written = false;
+try {
+    $permissions = @fileperms($temporary);
+    if (dirname($temporary) === __DIR__ && $permissions !== false && ($permissions & 0077) === 0) {
+        $written = @file_put_contents($temporary, $key) === strlen($key)
+            && @link($temporary, $file);
+    }
+} finally {
+    @unlink($temporary);
+}
+
+if (!$written) {
+    fwrite(STDERR, "Could not write the key to '.key'. No existing key was changed.\n");
+    exit(1);
+}
 
 /**
  * Inform the user that the process is complete.
